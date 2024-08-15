@@ -4,7 +4,8 @@ let
   inherit (builtins) head nixVersion;
   inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix;
 
-  inherit (pyproject-nix.lib) pypa eggs pep440 pep508;
+  inherit (pyproject-nix.lib) pypa pep440 pep508;
+  libeggs = pyproject-nix.lib.eggs;
 
   # Select the best compatible wheel from a list of wheels
   selectWheels = wheels: python:
@@ -15,7 +16,7 @@ let
     map (wheel: wheel.filename) compatibleWheels;
 
   # Select the best compatible egg from a list of eggs
-  selectEggs = eggs': python: map (egg: egg.filename) (eggs.selectEggs python (map (egg: eggs.parseEggFileName egg.file) eggs'));
+  selectEggs = eggs': python: map (egg: egg.filename) (libeggs.selectEggs python (map (egg: libeggs.parseEggFileName egg.file) eggs'));
 
   optionalHead = list: if length list > 0 then head list else null;
 
@@ -102,7 +103,7 @@ lib.fix (self: {
     let
       wheels = lib.lists.partition (f: pypa.isWheelFileName f.file) files;
       sdists = lib.lists.partition (f: pypa.isSdistFileName f.file) wheels.wrong;
-      eggs = lib.lists.partition (f: eggs.isEggFileName f.file) sdists.wrong;
+      eggs = lib.lists.partition (f: libeggs.isEggFileName f.file) sdists.wrong;
     in
     {
       sdists = sdists.right;
@@ -190,7 +191,7 @@ lib.fix (self: {
       format =
         if filename == null || pypa.isSdistFileName filename then "pyproject"
         else if pypa.isWheelFileName filename then "wheel"
-        else if eggs.isEggFileName filename then "egg"
+        else if libeggs.isEggFileName filename then "egg"
         else throw "Could not infer format from filename '${filename}'";
 
       src = __poetry2nix.fetchPackage {
