@@ -31,7 +31,7 @@ in
 
 lib.fix (self: {
 
-  fetchPoetryPackage =
+  fetchPackage =
     { fetchurl, fetchPypiLegacy }:
     {
       # The specific package segment from pdm.lock
@@ -145,9 +145,6 @@ lib.fix (self: {
     {
       # Project as returned by pyproject.lib.project.loadPoetryPyProject
       project
-    , # Whether to prefer prebuilt binary wheels over sdists
-      preferWheels ? false
-    ,
     }:
     # Package segment
     { name
@@ -174,7 +171,7 @@ lib.fix (self: {
     , pythonManylinuxPackages
     , __poetry2nix
     , # Whether to prefer prebuilt binary wheels over sdists
-      preferWheel ? preferWheels
+      preferWheel ? __poetry2nix.preferWheels
     }:
     let
       # Select filename based on sdist/wheel preference order.
@@ -196,7 +193,7 @@ lib.fix (self: {
         else if eggs.isEggFileName filename then "egg"
         else throw "Could not infer format from filename '${filename}'";
 
-      src = __poetry2nix.fetchPoetryPackage {
+      src = __poetry2nix.fetchPackage {
         inherit (project) pyproject projectRoot;
         inherit package filename;
         inherit (__poetry2nix) sources;

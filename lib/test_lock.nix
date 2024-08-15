@@ -17,19 +17,19 @@ let
 in
 
 {
-  fetchPoetryPackage =
+  fetchPackage =
     let
       pyproject = lib.importTOML ./fixtures/kitchen-sink/a/pyproject.toml;
       poetryLock = lib.importTOML ./fixtures/kitchen-sink/a/poetry.lock;
       projectRoot = ./fixtures/kitchen-sink/a;
-      fetchPoetryPackage = pkgs.callPackage lock.fetchPoetryPackage { };
+      fetchPackage = pkgs.callPackage lock.fetchPackage { };
       findPackage = name: lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package;
     in
     {
       testGit = {
         expr =
           let
-            src = fetchPoetryPackage {
+            src = fetchPackage {
               inherit pyproject projectRoot;
               package = findPackage "pip";
               sources = { };
@@ -48,7 +48,7 @@ in
       testPathSdist = {
         expr =
           let
-            src = fetchPoetryPackage {
+            src = fetchPackage {
               inherit pyproject projectRoot;
               package = findPackage "attrs";
               filename = "attrs-23.1.0.tar.gz";
@@ -66,7 +66,7 @@ in
       };
 
       testURL = {
-        expr = (fetchPoetryPackage {
+        expr = (fetchPackage {
           inherit pyproject projectRoot;
           package = findPackage "Arpeggio";
           filename = "Arpeggio-2.0.2-py2.py3-none-any.whl";
@@ -80,7 +80,7 @@ in
       testFetchFromLegacy = {
         expr =
           let
-            src = (fetchPoetryPackage {
+            src = (fetchPackage {
               inherit pyproject projectRoot;
               package = findPackage "requests";
               filename = "requests-2.32.3.tar.gz";
@@ -92,9 +92,9 @@ in
       };
     };
 
-  # Test fetchPoetryPackage using a variety of source configurations
+  # Test fetchPackage using a variety of source configurations
   sources = let
-    fetchPoetryPackage = pkgs.callPackage lock.fetchPoetryPackage {
+    fetchPackage = pkgs.callPackage lock.fetchPackage {
       fetchPypiLegacy = lib.id;
     };
 
@@ -108,7 +108,7 @@ in
       };
       poetryLock = lib.importTOML  (projectRoot + "/poetry.lock");
 
-      in fetchPoetryPackage {
+      in fetchPackage {
         inherit (project) pyproject;
         inherit projectRoot filename;
         package = lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package;
@@ -219,15 +219,16 @@ in
 
       python = pkgs.python312;
 
-      mkPackage' = lock.mkPackage { inherit project; preferWheels = false; };
+      mkPackage' = lock.mkPackage { inherit project; };
       mkPackage = pkg: let
         attrs = python.pkgs.callPackage (mkPackage' pkg) {
           buildPythonPackage = lib.id;
 
           __poetry2nix = {
-            fetchPoetryPackage = pkgs.callPackage lock.fetchPoetryPackage { };
+            fetchPackage = pkgs.callPackage lock.fetchPackage { };
             environ = pyproject-nix.lib.pep508.mkEnviron python;
             pyVersion = pyproject-nix.lib.pep440.parseVersion python.version;
+            preferWheels = false;
             sources = sources.mkSources { inherit project; };
           };
         };
