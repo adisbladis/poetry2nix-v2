@@ -236,18 +236,15 @@ lib.fix (self: {
       buildInputs =
         # Add manylinux platform dependencies.
         lib.optionals (stdenv.isLinux && stdenv.hostPlatform.libc == "glibc") (lib.unique (lib.flatten (
-          let
-            parsed = pypa.parseWheelFileName filename;
-          in
           map
             (tag: (
-              if lib.hasPrefix "manylinux1" tag then pythonManylinuxPackages.manylinux1
-              else if lib.hasPrefix "manylinux2010" tag then pythonManylinuxPackages.manylinux2010
-              else if lib.hasPrefix "manylinux2014" tag then pythonManylinuxPackages.manylinux2014
-              else if lib.hasPrefix "manylinux_" tag then pythonManylinuxPackages.manylinux2014
+              if hasPrefix "manylinux1" tag then pythonManylinuxPackages.manylinux1
+              else if hasPrefix "manylinux2010" tag then pythonManylinuxPackages.manylinux2010
+              else if hasPrefix "manylinux2014" tag then pythonManylinuxPackages.manylinux2014
+              else if hasPrefix "manylinux_" tag then pythonManylinuxPackages.manylinux2014
               else [ ]  # Any other type of wheel don't need manylinux inputs
             ))
-            parsed.platformTags
+            (pypa.parseWheelFileName filename).platformTags
         )));
     });
 
