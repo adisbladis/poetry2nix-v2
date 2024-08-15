@@ -29,7 +29,7 @@ in
         expr =
           let
             src = fetchPackage {
-              package = findPackage "pip";
+              package = lock.parsePackage (findPackage "pip");
               sources = { };
             };
           in
@@ -47,7 +47,7 @@ in
         expr =
           let
             src = fetchPackage {
-              package = findPackage "attrs";
+              package = lock.parsePackage (findPackage "attrs");
               filename = "attrs-23.1.0.tar.gz";
               sources = { };
             };
@@ -64,7 +64,7 @@ in
 
       testURL = {
         expr = (fetchPackage {
-          package = findPackage "Arpeggio";
+          package = lock.parsePackage (findPackage "Arpeggio");
           filename = "Arpeggio-2.0.2-py2.py3-none-any.whl";
           sources = { };
         }).passthru;
@@ -77,7 +77,7 @@ in
         expr =
           let
             src = (fetchPackage {
-              package = findPackage "requests";
+              package = lock.parsePackage (findPackage "requests");
               filename = "requests-2.32.3.tar.gz";
               sources = sources.mkSources { project = { }; }; # Dummy empty project
             }).passthru;
@@ -109,7 +109,7 @@ in
         in
         fetchPackage {
           inherit projectRoot filename;
-          package = lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package;
+          package = lock.parsePackage (lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package);
           sources = sources.mkSources { inherit project; };
         };
 
@@ -152,38 +152,51 @@ in
   partitionFiles = {
     testSimple = {
       expr = lock.partitionFiles (findPkg "arpeggio" fixtures.trivial).files;
-      expected = {
-        eggs = [ ];
-        others = [ ];
-        sdists = [
-          {
-            file = "Arpeggio-2.0.2.tar.gz";
-            hash = "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700";
-          }
-        ];
-        wheels = [
-          {
+      expected =
+        let
+          wheel = {
             file = "Arpeggio-2.0.2-py2.py3-none-any.whl";
             hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250";
-          }
-        ];
-      };
+          };
+
+          sdist = {
+            file = "Arpeggio-2.0.2.tar.gz";
+            hash = "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700";
+          };
+
+        in
+        {
+          all = { ${sdist.file} = sdist; ${wheel.file} = wheel; };
+          eggs = [ ];
+          others = [ ];
+          sdists = [ sdist ];
+          wheels = [ wheel ];
+        };
     };
   };
 
   parsePackage =
     let
-      testPkg = pkgName: lock.parsePackage (findPkg pkgName fixtures.kitchen-sink);
+      testPkg = pkgName: (lock.parsePackage (findPkg pkgName fixtures.kitchen-sink));
     in
     {
       testPackage = {
         expr = testPkg "requests";
-        expected = { dependencies = { certifi = ">=2017.4.17"; charset-normalizer = ">=2,<4"; idna = ">=2.5,<4"; urllib3 = ">=1.21.1,<3"; }; description = "Python HTTP for Humans."; extras = { socks = [{ conditions = [ ]; extras = [ ]; markers = null; name = "pysocks"; url = null; }]; use-chardet-on-py3 = [{ conditions = [ ]; extras = [ ]; markers = null; name = "chardet"; url = null; }]; }; files = [{ file = "requests-2.32.3-py3-none-any.whl"; hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"; } { file = "requests-2.32.3.tar.gz"; hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"; }]; name = "requests"; optional = false; python-versions = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 8 ]; }; }]; source = { }; version = "2.32.3"; version' = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 32 3 ]; }; };
+        expected =
+          let
+            sdist = { file = "requests-2.32.3.tar.gz"; hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"; };
+            wheel = { file = "requests-2.32.3-py3-none-any.whl"; hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"; };
+          in
+          { dependencies = { certifi = ">=2017.4.17"; charset-normalizer = ">=2,<4"; idna = ">=2.5,<4"; urllib3 = ">=1.21.1,<3"; }; description = "Python HTTP for Humans."; develop = false; extras = { socks = [{ conditions = [ ]; extras = [ ]; markers = null; name = "pysocks"; url = null; }]; use-chardet-on-py3 = [{ conditions = [ ]; extras = [ ]; markers = null; name = "chardet"; url = null; }]; }; files = { all = { "requests-2.32.3-py3-none-any.whl" = wheel; "requests-2.32.3.tar.gz" = sdist; }; eggs = [ ]; others = [ ]; sdists = [ sdist ]; wheels = [ wheel ]; }; name = "requests"; optional = false; python-versions = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 8 ]; }; }]; source = { }; version = "2.32.3"; version' = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 32 3 ]; }; };
       };
 
       testURLSource = {
         expr = testPkg "Arpeggio";
-        expected = { dependencies = { }; description = "Packrat parser interpreter"; extras = { dev = [{ conditions = [ ]; extras = [ ]; markers = null; name = "mike"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "mkdocs"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "twine"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "wheel"; url = null; }]; test = [{ conditions = [ ]; extras = [ ]; markers = null; name = "coverage"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "coveralls"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "flake8"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "pytest"; url = null; }]; }; files = [{ file = "Arpeggio-2.0.2-py2.py3-none-any.whl"; hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"; }]; name = "Arpeggio"; optional = false; python-versions = [{ op = ""; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ "*" ]; }; }]; source = { type = "url"; url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"; }; version = "2.0.2"; version' = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 0 2 ]; }; };
+        expected =
+          let
+            wheel = { file = "Arpeggio-2.0.2-py2.py3-none-any.whl"; hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"; };
+          in
+          { dependencies = { }; description = "Packrat parser interpreter"; develop = false; extras = { dev = [{ conditions = [ ]; extras = [ ]; markers = null; name = "mike"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "mkdocs"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "twine"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "wheel"; url = null; }]; test = [{ conditions = [ ]; extras = [ ]; markers = null; name = "coverage"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "coveralls"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "flake8"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "pytest"; url = null; }]; }; files = { all = { "Arpeggio-2.0.2-py2.py3-none-any.whl" = wheel; }; eggs = [ ]; others = [ ]; sdists = [ ]; wheels = [ wheel ]; }; name = "Arpeggio"; optional = false; python-versions = [{ op = ""; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ "*" ]; }; }]; source = { type = "url"; url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"; }; version = "2.0.2"; version' = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 0 2 ]; }; };
       };
     };
 

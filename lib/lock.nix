@@ -38,9 +38,7 @@ lib.fix (self: {
     , fetchPypiLegacy
     }:
     let
-      # Group list of files by their filename into an attrset
-      filesByFileName = listToAttrs (map (file: nameValuePair file.file file) package.files);
-      file = filesByFileName.${filename} or (throw "Filename '${filename}' not present in package");
+      file = package.files.all.${filename} or (throw "Filename '${filename}' not present in package");
 
       # Get list of URLs from sources
       urls = map (name: sources.sources.${name}.url) sources.order;
@@ -97,10 +95,14 @@ lib.fix (self: {
       eggs = lib.lists.partition (f: libeggs.isEggFileName f.file) sdists.wrong;
     in
     {
+      # Group into precedence orders
       sdists = sdists.right;
       wheels = wheels.right;
       eggs = eggs.right;
       others = eggs.wrong;
+
+      # Create an attrset of all files -> entry for easy hash lookup
+      all = listToAttrs (map (f: nameValuePair f.file f) files);
     };
 
   /*
@@ -126,10 +128,12 @@ lib.fix (self: {
     , extras ? { }
     , python-versions ? "*"
     , source ? { }
+    , develop ? false
     }:
     {
-      inherit name version description optional files source;
+      inherit name version description optional source develop;
       version' = pep440.parseVersion version;
+      files = self.partitionFiles files;
       inherit dependencies;
       extras = mapAttrs (_: extras: map parseExtra extras) extras;
       python-versions = pep440.parseVersionConds python-versions;
@@ -147,10 +151,8 @@ lib.fix (self: {
     , extras
     , source # deadnix: skip
     , python-versions # deadnix: skip
+    , develop # deadnix: skip
     }@package:
-    let
-      inherit (self.partitionFiles files) wheels sdists eggs others;
-    in
     { python
     , stdenv
     , buildPythonPackage
@@ -169,13 +171,13 @@ lib.fix (self: {
       # Select filename based on sdist/wheel preference order.
       filenames =
         let
-          selectedWheels = selectWheels wheels python;
-          selectedSdists = map (file: file.file) sdists;
+          selectedWheels = selectWheels files.wheels python;
+          selectedSdists = map (file: file.file) files.sdists;
         in
         (
           if preferWheel then selectedWheels ++ selectedSdists
           else selectedSdists ++ selectedWheels
-        ) ++ selectEggs eggs python ++ map (file: file.file) others;
+        ) ++ selectEggs files.eggs python ++ map (file: file.file) files.others;
 
       filename = optionalHead filenames;
 
