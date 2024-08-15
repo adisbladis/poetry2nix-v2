@@ -135,28 +135,28 @@ lib.fix (self: {
     , source ? { }
     }@package:
     {
-      inherit name description optional files source;
-      version = pep440.parseVersion version;
+      inherit name version description optional files source;
+      version' = pep440.parseVersion version;
       dependencies = dependencies;
       extras = mapAttrs (_: extras: map parseExtra extras) extras;
       python-versions = pep440.parseVersionConds python-versions;
     };
 
   mkPackage =
-    # Package segment
+    # Package segment parsed by parsePackage
     { name
     , version
-    , dependencies ? { }
-    , description ? ""  # deadnix: skip
-    , optional ? false  # deadnix: skip
-    , files ? [ ]  # deadnix: skip
-    , extras ? { }  # deadnix: skip
-    , python-versions ? "*"  # deadnix: skip
+    , version'
+    , dependencies
+    , description
+    , optional
+    , files
+    , extras
+    , python-versions
+    , source
     }@package:
     let
       inherit (self.partitionFiles files) wheels sdists eggs others;
-      extras' = parseExtras extras;
-
     in
     { python
     , stdenv
@@ -212,7 +212,7 @@ lib.fix (self: {
         extras = spec.extras or [ ];
       in [dep] ++ map (extraName: dep.optional-dependencies.${extraName}) extras) dependencies);
 
-      optional-dependencies = mapAttrs (_: extras: concatMap getExtra extras) extras';
+      optional-dependencies = mapAttrs (_: extras: concatMap getExtra extras) extras;
 
       meta = {
         inherit description;
