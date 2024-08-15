@@ -15,7 +15,6 @@ in
   mkSources =
     { project }:
     let
-      hasSources = project.pyproject ? tool.poetry.source;
       source = project.pyproject.tool.poetry.source or [ ];
 
       primary = filter (s: s.priority == "primary") source;
@@ -39,11 +38,11 @@ in
       # All sources
       allSources = defaultSources ++ explicit;
     in
-      assert allUnique (map (s: s.name) allSources);
-      {
-        # Sources by name
-        sources = listToAttrs (map (s: nameValuePair s.name s) allSources);
-        # Priority order
-        order = map (s: s.name) defaultSources;
-      };
+    assert allUnique (map (s: s.name) allSources);
+    {
+      # Sources by name
+      sources = listToAttrs (map (s: nameValuePair s.name s) allSources);
+      # Priority order
+      order = map (s: s.name) defaultSources;
+    };
 }

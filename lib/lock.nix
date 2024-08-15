@@ -20,20 +20,11 @@ let
 
   optionalHead = list: if length list > 0 then head list else null;
 
-  # Poetry extras contains non-pep508 version bounds that looks like `attrs (>=19.2)`
-  # We need to strip that before passing them on to pep508.parseString
-  parseExtra = let
-    matchExtra = builtins.match "(.+) .+";
-  in extra: pep508.parseString (let m = matchExtra extra; in if m != null then head m else extra);
-
-  parseExtras = lib.mapAttrs (_: extras: map parseExtra extras);
-
 in
 
 lib.fix (self: {
 
   fetchPackage =
-    { fetchurl, fetchPypiLegacy }:
     {
       # The specific package segment from pdm.lock
       package
@@ -41,10 +32,10 @@ lib.fix (self: {
       projectRoot
     , # Filename for which to invoke fetcher
       filename ? throw "Missing argument filename"
-    , # Parsed pyproject.toml contents
-      pyproject
-    , # PyPI sources as extracted from pyproject.toml
+    , # Parsed pyproject.toml contents # PyPI sources as extracted from pyproject.toml
       sources
+    , fetchurl
+    , fetchPypiLegacy
     }:
     let
       # Group list of files by their filename into an attrset
@@ -84,11 +75,11 @@ lib.fix (self: {
       {
         outPath = projectRoot + "/${source.url}";
       }
-    else if sourceType == "legacy" then  # Explicit source
+    else if sourceType == "legacy" then # Explicit source
       (fetchPypiLegacy {
         pname = package.name;
         inherit (file) file hash;
-        url = sources.sources.${source.reference}.url;
+        inherit (sources.sources.${source.reference}) url;
       })
     else
       (fetchPypiLegacy {
@@ -120,9 +111,11 @@ lib.fix (self: {
       # Poetry extras contains non-pep508 version bounds that looks like `attrs (>=19.2)`
       # We need to strip that before passing them on to pep508.parseString.
       # TODO: Actually parse version bounds too (do we need to?).
-      parseExtra = let
-        matchExtra = builtins.match "(.+) .+";
-      in extra: pep508.parseString (let m = matchExtra extra; in if m != null then head m else extra);
+      parseExtra =
+        let
+          matchExtra = builtins.match "(.+) .+";
+        in
+        extra: pep508.parseString (let m = matchExtra extra; in if m != null then head m else extra);
     in
     { name
     , version
@@ -133,11 +126,11 @@ lib.fix (self: {
     , extras ? { }
     , python-versions ? "*"
     , source ? { }
-    }@package:
+    }:
     {
       inherit name version description optional files source;
       version' = pep440.parseVersion version;
-      dependencies = dependencies;
+      inherit dependencies;
       extras = mapAttrs (_: extras: map parseExtra extras) extras;
       python-versions = pep440.parseVersionConds python-versions;
     };
@@ -146,14 +139,14 @@ lib.fix (self: {
     # Package segment parsed by parsePackage
     { name
     , version
-    , version'
+    , version' # deadnix: skip
     , dependencies
     , description
     , optional
     , files
     , extras
-    , python-versions
-    , source
+    , source # deadnix: skip
+    , python-versions # deadnix: skip
     }@package:
     let
       inherit (self.partitionFiles files) wheels sdists eggs others;
@@ -166,6 +159,8 @@ lib.fix (self: {
     , pypaInstallHook
     , autoPatchelfHook
     , pythonManylinuxPackages
+    , fetchurl
+    , fetchPypiLegacy
     , __poetry2nix
     , # Whether to prefer prebuilt binary wheels over sdists
       preferWheel ? __poetry2nix.preferWheels
@@ -190,27 +185,33 @@ lib.fix (self: {
         else if libeggs.isEggFileName filename then "egg"
         else throw "Could not infer format from filename '${filename}'";
 
-      src = __poetry2nix.fetchPackage {
-        inherit (__poetry2nix.project) pyproject projectRoot;
-        inherit package filename;
+      src = self.fetchPackage {
+        inherit (__poetry2nix.project) projectRoot;
+        inherit package filename fetchurl fetchPypiLegacy;
         inherit (__poetry2nix) sources;
       };
 
       # Get an extra + it's nested list of extras
       # Example: build[virtualenv] needs to pull in build, but also build.optional-dependencies.virtualenv
-      getExtra = extra: let
-        dep = pythonPackages.${extra.name};
-      in [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extra.extras;
+      getExtra = extra:
+        let
+          dep = pythonPackages.${extra.name};
+        in
+        [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extra.extras;
 
     in
     buildPythonPackage ({
       pname = name;
       inherit version src format;
 
-      dependencies = concatLists (mapAttrsToList (name: spec: let
-        dep = pythonPackages.${name};
-        extras = spec.extras or [ ];
-      in [dep] ++ map (extraName: dep.optional-dependencies.${extraName}) extras) dependencies);
+      dependencies = concatLists (mapAttrsToList
+        (name: spec:
+          let
+            dep = pythonPackages.${name};
+            extras = spec.extras or [ ];
+          in
+          [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extras)
+        dependencies);
 
       optional-dependencies = mapAttrs (_: extras: concatMap getExtra extras) extras;
 
