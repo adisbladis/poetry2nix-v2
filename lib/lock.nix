@@ -2,9 +2,9 @@
 
 let
   inherit (builtins) head nixVersion;
-  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists;
+  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix;
 
-  inherit (pyproject-nix.lib) pypa eggs pep508;
+  inherit (pyproject-nix.lib) pypa eggs pep440 pep508;
 
   # Select the best compatible wheel from a list of wheels
   selectWheels = wheels: python:
@@ -111,6 +111,36 @@ lib.fix (self: {
       others = eggs.wrong;
     };
 
+  /*
+    Parse a single package from poetry.lock
+  */
+  parsePackage =
+    let
+      # Poetry extras contains non-pep508 version bounds that looks like `attrs (>=19.2)`
+      # We need to strip that before passing them on to pep508.parseString.
+      # TODO: Actually parse version bounds too (do we need to?).
+      parseExtra = let
+        matchExtra = builtins.match "(.+) .+";
+      in extra: pep508.parseString (let m = matchExtra extra; in if m != null then head m else extra);
+    in
+    { name
+    , version
+    , dependencies ? { }
+    , description ? ""
+    , optional ? false
+    , files ? [ ]
+    , extras ? { }
+    , python-versions ? "*"
+    , source ? { }
+    }@package:
+    {
+      inherit name description optional files source;
+      version = pep440.parseVersion version;
+      dependencies = dependencies;
+      extras = mapAttrs (_: extras: map parseExtra extras) extras;
+      python-versions = pep440.parseVersionConds python-versions;
+    };
+
   mkPackage =
     {
       # Project as returned by pyproject.lib.project.loadPoetryPyProject
@@ -163,7 +193,7 @@ lib.fix (self: {
       format =
         if filename == null || pypa.isSdistFileName filename then "pyproject"
         else if pypa.isWheelFileName filename then "wheel"
-        else if pyproject-nix.lib.eggs.isEggFileName filename then "egg"
+        else if eggs.isEggFileName filename then "egg"
         else throw "Could not infer format from filename '${filename}'";
 
       src = __poetry2nix.fetchPoetryPackage {

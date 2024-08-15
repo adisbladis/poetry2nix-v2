@@ -172,6 +172,45 @@ in
     };
   };
 
+  parsePackage = let
+    testPkg = pkgName: lock.parsePackage (findPkg pkgName fixtures.kitchen-sink);
+  in {
+    testPackage = {
+      expr = testPkg "requests";
+      expected = { dependencies = { certifi = ">=2017.4.17"; charset-normalizer = ">=2,<4"; idna = ">=2.5,<4"; urllib3 = ">=1.21.1,<3"; }; description = "Python HTTP for Humans."; extras = { socks = [ { conditions = [ ]; extras = [ ]; markers = null; name = "pysocks"; url = null; } ]; use-chardet-on-py3 = [ { conditions = [ ]; extras = [ ]; markers = null; name = "chardet"; url = null; } ]; }; files = [ { file = "requests-2.32.3-py3-none-any.whl"; hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"; } { file = "requests-2.32.3.tar.gz"; hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"; } ]; name = "requests"; optional = false; python-versions = [ { op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 8 ]; }; } ]; source = { }; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 32 3 ]; }; };
+    };
+
+    testURLSource = {
+      expr = testPkg "Arpeggio";
+      expected = {
+        description = "Packrat parser interpreter";
+        extras = { dev = [ { conditions = [ ]; extras = [ ]; markers = null; name = "mike"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "mkdocs"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "twine"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "wheel"; url = null; } ]; test = [ { conditions = [ ]; extras = [ ]; markers = null; name = "coverage"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "coveralls"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "flake8"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "pytest"; url = null; } ]; };
+        dependencies = { };
+        files = [
+          {
+            file = "Arpeggio-2.0.2-py2.py3-none-any.whl";
+            hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250";
+          }
+        ];
+        name = "Arpeggio";
+        optional = false;
+        python-versions = [ { op = ""; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ "*" ]; }; } ];
+        source = {
+          type = "url";
+          url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl";
+        };
+        version = {
+          dev = null;
+          epoch = 0;
+          local = null;
+          post = null;
+          pre = null;
+          release = [ 2 0 2 ];
+        };
+      };
+    };
+  };
+
   mkPackage =
     let
       project = {
