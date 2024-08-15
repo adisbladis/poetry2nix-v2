@@ -209,11 +209,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1723433974,
-        "narHash": "sha256-3O1hL2MXHqM1703motr9tUQE+sHX/amX2evEaSkfBgA=",
+        "lastModified": 1723719986,
+        "narHash": "sha256-7pKNcikgXbumgyQ1OR6tnrTsF5SCp5UfVOgVLVbcBWY=",
         "owner": "adisbladis",
         "repo": "pyproject.nix",
-        "rev": "3945b41d75a38042f670a1180cbafdbde425ae63",
+        "rev": "cfc19df33336764b18f6bf3261e7dc2dd782ffac",
         "type": "github"
       },
       "original": {

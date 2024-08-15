@@ -2,10 +2,11 @@
 
 let
   inherit (builtins) head nixVersion;
-  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix;
+  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten filter isString match split;
 
-  inherit (pyproject-nix.lib) pypa pep440 pep508;
+  inherit (pyproject-nix.lib) pypa pep440 pep508 poetry;
   libeggs = pyproject-nix.lib.eggs;
+  libpoetry = pyproject-nix.lib.poetry;
 
   # Select the best compatible wheel from a list of wheels
   selectWheels = wheels: python:
@@ -112,7 +113,6 @@ lib.fix (self: {
     let
       # Poetry extras contains non-pep508 version bounds that looks like `attrs (>=19.2)`
       # We need to strip that before passing them on to pep508.parseString.
-      # TODO: Actually parse version bounds too (do we need to?).
       parseExtra =
         let
           matchExtra = builtins.match "(.+) .+";
@@ -136,7 +136,7 @@ lib.fix (self: {
       files = self.partitionFiles files;
       inherit dependencies;
       extras = mapAttrs (_: extras: map parseExtra extras) extras;
-      python-versions = pep440.parseVersionConds python-versions;
+      python-versions = libpoetry.parseVersionConds python-versions;
     };
 
   mkPackage =
