@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "extras-dependency-list"
+name = "multi-choice-package"
 version = "0.1.0"
 description = ""
 authors = ["adisbladis <adisbladis@gmail.com>"]
