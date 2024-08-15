@@ -143,10 +143,6 @@ lib.fix (self: {
     };
 
   mkPackage =
-    {
-      # Project as returned by pyproject.lib.project.loadPoetryPyProject
-      project
-    }:
     # Package segment
     { name
     , version
@@ -195,7 +191,7 @@ lib.fix (self: {
         else throw "Could not infer format from filename '${filename}'";
 
       src = __poetry2nix.fetchPackage {
-        inherit (project) pyproject projectRoot;
+        inherit (__poetry2nix.project) pyproject projectRoot;
         inherit package filename;
         inherit (__poetry2nix) sources;
       };

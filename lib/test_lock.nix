@@ -219,9 +219,8 @@ in
 
       python = pkgs.python312;
 
-      mkPackage' = lock.mkPackage { inherit project; };
       mkPackage = pkg: let
-        attrs = python.pkgs.callPackage (mkPackage' pkg) {
+        attrs = python.pkgs.callPackage (lock.mkPackage pkg) {
           buildPythonPackage = lib.id;
 
           __poetry2nix = {
@@ -230,6 +229,7 @@ in
             pyVersion = pyproject-nix.lib.pep440.parseVersion python.version;
             preferWheels = false;
             sources = sources.mkSources { inherit project; };
+            inherit project;
           };
         };
 
