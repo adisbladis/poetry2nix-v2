@@ -3,7 +3,13 @@
 # Ordering (note that priorities marked with DEPRECATED are not supported)
 #
 let
-  inherit (lib) filter length allUnique listToAttrs nameValuePair;
+  inherit (lib)
+    filter
+    length
+    allUnique
+    listToAttrs
+    nameValuePair
+    ;
 
   implicitPypi = {
     name = "pypi";

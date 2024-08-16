@@ -1,4 +1,9 @@
-{ lib, pyproject-nix, sources, ... }:
+{
+  lib,
+  pyproject-nix,
+  sources,
+  ...
+}:
 
 let
   implicitPypi = {
@@ -10,11 +15,13 @@ in
 {
   mkSources =
     let
-      mkSources = path: sources.mkSources {
-        project = pyproject-nix.lib.project.loadPoetryPyproject {
-          pyproject = lib.importTOML (path + "/pyproject.toml");
+      mkSources =
+        path:
+        sources.mkSources {
+          project = pyproject-nix.lib.project.loadPoetryPyproject {
+            pyproject = lib.importTOML (path + "/pyproject.toml");
+          };
         };
-      };
     in
     {
       testImplicitPypi = {
@@ -51,7 +58,10 @@ in
               url = "https://foo.bar/simple/";
             };
           };
-          order = [ "pypi" "foo" ];
+          order = [
+            "pypi"
+            "foo"
+          ];
         };
       };
 
@@ -66,7 +76,10 @@ in
               url = "https://foo.bar/simple/";
             };
           };
-          order = [ "pypi" "foo" ];
+          order = [
+            "pypi"
+            "foo"
+          ];
         };
       };
     };

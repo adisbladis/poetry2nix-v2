@@ -24,12 +24,13 @@
   };
 
   outputs =
-    { self
-    , nixpkgs
-    , flake-parts
-    , treefmt-nix
-    , pyproject-nix
-    , ...
+    {
+      self,
+      nixpkgs,
+      flake-parts,
+      treefmt-nix,
+      pyproject-nix,
+      ...
     }@inputs:
     let
       inherit (nixpkgs) lib;

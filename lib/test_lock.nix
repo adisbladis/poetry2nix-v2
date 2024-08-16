@@ -1,4 +1,11 @@
-{ lib, lock, pyproject-nix, sources, pkgs, ... }:
+{
+  lib,
+  lock,
+  pyproject-nix,
+  sources,
+  pkgs,
+  ...
+}:
 
 let
 
@@ -14,12 +21,17 @@ let
     multiChoiceNestedDependent = mkFixture ./fixtures/multi-choice-nested/dependent-package;
   };
 
-  findPkg = pkgName: fixture: lib.findFirst (pkg: pkg.name == pkgName) (throw "not found") fixture.lock.package;
+  findPkg =
+    pkgName: fixture: lib.findFirst (pkg: pkg.name == pkgName) (throw "not found") fixture.lock.package;
 
   # Expected saved as JSON files
   expected =
     let
-      expected' = lib.mapAttrs (n: _: lib.importJSON (./. + "/expected/${n}")) (lib.filterAttrs (filename: type: lib.hasSuffix ".json" filename && type == "regular") (builtins.readDir ./expected));
+      expected' = lib.mapAttrs (n: _: lib.importJSON (./. + "/expected/${n}")) (
+        lib.filterAttrs (filename: type: lib.hasSuffix ".json" filename && type == "regular") (
+          builtins.readDir ./expected
+        )
+      );
     in
     test: expected'.${"${test}.json"};
 
@@ -30,8 +42,17 @@ in
     let
       poetryLock = lib.importTOML ./fixtures/kitchen-sink/a/poetry.lock;
       projectRoot = ./fixtures/kitchen-sink/a;
-      fetchPackage = args: lock.fetchPackage (args // { inherit (pkgs) fetchurl fetchPypiLegacy; inherit projectRoot; });
-      findPackage = name: lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package;
+      fetchPackage =
+        args:
+        lock.fetchPackage (
+          args
+          // {
+            inherit (pkgs) fetchurl fetchPypiLegacy;
+            inherit projectRoot;
+          }
+        );
+      findPackage =
+        name: lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package;
     in
     {
       testGit = {
@@ -43,7 +64,14 @@ in
             };
           in
           assert lib.hasAttr "outPath" src;
-          { inherit (src) ref allRefs submodules rev; };
+          {
+            inherit (src)
+              ref
+              allRefs
+              submodules
+              rev
+              ;
+          };
         expected = {
           allRefs = true;
           ref = "refs/tags/20.3.1";
@@ -72,11 +100,12 @@ in
       };
 
       testURL = {
-        expr = (fetchPackage {
-          package = lock.parsePackage (findPackage "Arpeggio");
-          filename = "Arpeggio-2.0.2-py2.py3-none-any.whl";
-          sources = { };
-        }).passthru;
+        expr =
+          (fetchPackage {
+            package = lock.parsePackage (findPackage "Arpeggio");
+            filename = "Arpeggio-2.0.2-py2.py3-none-any.whl";
+            sources = { };
+          }).passthru;
         expected = {
           url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl";
         };
@@ -85,11 +114,12 @@ in
       testFetchFromLegacy = {
         expr =
           let
-            src = (fetchPackage {
-              package = lock.parsePackage (findPackage "requests");
-              filename = "requests-2.32.3.tar.gz";
-              sources = sources.mkSources { project = { }; }; # Dummy empty project
-            }).passthru;
+            src =
+              (fetchPackage {
+                package = lock.parsePackage (findPackage "requests");
+                filename = "requests-2.32.3.tar.gz";
+                sources = sources.mkSources { project = { }; }; # Dummy empty project
+              }).passthru;
           in
           src;
         expected = { };
@@ -99,15 +129,21 @@ in
   # Test fetchPackage using a variety of source configurations
   sources =
     let
-      fetchPackage = args: lock.fetchPackage (args // {
-        fetchPypiLegacy = lib.id;
-        fetchurl = lib.id;
-      });
+      fetchPackage =
+        args:
+        lock.fetchPackage (
+          args
+          // {
+            fetchPypiLegacy = lib.id;
+            fetchurl = lib.id;
+          }
+        );
 
       mkTest =
-        { projectRoot
-        , name
-        , filename
+        {
+          projectRoot,
+          name,
+          filename,
         }:
         let
           project = pyproject-nix.lib.project.loadPoetryPyproject {
@@ -118,7 +154,9 @@ in
         in
         fetchPackage {
           inherit projectRoot filename;
-          package = lock.parsePackage (lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package);
+          package = lock.parsePackage (
+            lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package
+          );
           sources = sources.mkSources { inherit project; };
         };
 
@@ -144,7 +182,6 @@ in
         expected = expected "sources.testPrimary";
       };
     };
-
 
   partitionFiles = {
     testSimple = {
@@ -192,28 +229,37 @@ in
 
       python = pkgs.python312;
 
-      mkPackage = pkg:
+      mkPackage =
+        pkg:
         let
-          attrs = python.pkgs.callPackage (lock.mkPackage {
-            sources = sources.mkSources { inherit project; };
-            inherit project;
-          } (lock.parsePackage pkg)) {
-            buildPythonPackage = lib.id;
+          attrs =
+            python.pkgs.callPackage
+              (lock.mkPackage {
+                sources = sources.mkSources { inherit project; };
+                inherit project;
+              } (lock.parsePackage pkg))
+              {
+                buildPythonPackage = lib.id;
 
-            __poetry2nix = {
-              environ = pyproject-nix.lib.pep508.mkEnviron python;
-              pyVersion = pyproject-nix.lib.pep440.parseVersion python.version;
-              preferWheels = false;
-            };
-          };
+                __poetry2nix = {
+                  environ = pyproject-nix.lib.pep508.mkEnviron python;
+                  pyVersion = pyproject-nix.lib.pep440.parseVersion python.version;
+                  preferWheels = false;
+                };
+              };
 
-          cleaned = removeAttrs attrs [ "override" "overrideDerivation" ];
+          cleaned = removeAttrs attrs [
+            "override"
+            "overrideDerivation"
+          ];
         in
         cleaned
         // {
           # Just extract names of dependencies for equality checking
           dependencies = map (dep: dep.pname) attrs.dependencies;
-          optional-dependencies = lib.mapAttrs (_: extras: map (drv: drv.pname) extras) attrs.optional-dependencies;
+          optional-dependencies = lib.mapAttrs (
+            _: extras: map (drv: drv.pname) extras
+          ) attrs.optional-dependencies;
 
           # Only get URLs from src
           src = attrs.src.passthru;
