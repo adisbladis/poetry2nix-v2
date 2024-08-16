@@ -194,15 +194,16 @@ in
 
       mkPackage = pkg:
         let
-          attrs = python.pkgs.callPackage (lock.mkPackage (lock.parsePackage pkg)) {
+          attrs = python.pkgs.callPackage (lock.mkPackage {
+            sources = sources.mkSources { inherit project; };
+            inherit project;
+          } (lock.parsePackage pkg)) {
             buildPythonPackage = lib.id;
 
             __poetry2nix = {
               environ = pyproject-nix.lib.pep508.mkEnviron python;
               pyVersion = pyproject-nix.lib.pep440.parseVersion python.version;
               preferWheels = false;
-              sources = sources.mkSources { inherit project; };
-              inherit project;
             };
           };
 

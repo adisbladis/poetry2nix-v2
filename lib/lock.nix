@@ -180,6 +180,8 @@ lib.fix (self: {
     };
 
   mkPackage =
+    # Pyproject.nix project (loadPoetryPyproject)
+    { project, sources }:
     # Package segment parsed by parsePackage
     { name
     , version
@@ -228,9 +230,8 @@ lib.fix (self: {
         else throw "Could not infer format from filename '${filename}'";
 
       src = self.fetchPackage {
-        inherit (__poetry2nix.project) projectRoot;
-        inherit package filename fetchurl fetchPypiLegacy;
-        inherit (__poetry2nix) sources;
+        inherit (project) projectRoot;
+        inherit sources package filename fetchurl fetchPypiLegacy;
       };
 
       # Get an extra + it's nested list of extras
