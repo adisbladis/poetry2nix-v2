@@ -127,33 +127,21 @@ in
         filename = "Arpeggio-2.0.2.tar.gz";
       };
 
-      expected' = {
-        file = "Arpeggio-2.0.2.tar.gz";
-        hash = "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700";
-        pname = "arpeggio";
-      };
-
     in
     {
       testExplicit = {
         expr = mkTest (expr' // { projectRoot = ./fixtures/package-sources/explicit; });
-        expected = expected' // {
-          url = "https://pypi.org/simple";
-        };
+        expected = expected "sources.testExplicit";
       };
 
       testSupplemental = {
         expr = mkTest (expr' // { projectRoot = ./fixtures/package-sources/supplemental; });
-        expected = expected' // {
-          urls = [ "https://pypi.org/simple" "https://foo.bar/simple/" ];
-        };
+        expected = expected "sources.testSupplemental";
       };
 
       testPrimary = {
         expr = mkTest (expr' // { projectRoot = ./fixtures/package-sources/primary; });
-        expected = expected' // {
-          urls = [ "https://foo.bar/simple/" ];
-        };
+        expected = expected "sources.testPrimary";
       };
     };
 
@@ -161,26 +149,7 @@ in
   partitionFiles = {
     testSimple = {
       expr = lock.partitionFiles (findPkg "arpeggio" fixtures.trivial).files;
-      expected =
-        let
-          wheel = {
-            file = "Arpeggio-2.0.2-py2.py3-none-any.whl";
-            hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250";
-          };
-
-          sdist = {
-            file = "Arpeggio-2.0.2.tar.gz";
-            hash = "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700";
-          };
-
-        in
-        {
-          all = { ${sdist.file} = sdist; ${wheel.file} = wheel; };
-          eggs = [ ];
-          others = [ ];
-          sdists = [ sdist ];
-          wheels = [ wheel ];
-        };
+      expected = expected "partitionFiles.testSimple";
     };
   };
 
@@ -254,39 +223,13 @@ in
       # A simple package with only optional dependencies
       testSimple = {
         expr = mkPackage (findPkg "arpeggio" fixtures.trivial);
-        expected = {
-          pname = "arpeggio";
-          src = { };
-          dependencies = [ ];
-          version = "2.0.2";
-          format = "pyproject";
-          optional-dependencies = {
-            dev = [ "mike" "mkdocs" "twine" "wheel" ];
-            test = [ "coverage" "coveralls" "flake8" "pytest" ];
-          };
-          meta = {
-            description = "Packrat parser interpreter";
-          };
-        };
+        expected = expected "mkPackage.testSimple";
       };
 
       # A package with dependencies
       testPackage = {
         expr = mkPackage (findPkg "requests" fixtures.kitchen-sink);
-        expected = {
-          pname = "requests";
-          src = { };
-          version = "2.32.3";
-          format = "pyproject";
-          dependencies = [ "certifi" "charset-normalizer" "idna" "urllib3" ];
-          optional-dependencies = {
-            socks = [ "pysocks" ];
-            use-chardet-on-py3 = [ "chardet" ];
-          };
-          meta = {
-            description = "Python HTTP for Humans.";
-          };
-        };
+        expected = expected "mkPackage.testPackage";
       };
 
     };

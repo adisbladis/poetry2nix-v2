@@ -92,7 +92,9 @@
         "local": null,
         "post": null,
         "pre": null,
-        "release": ["*"]
+        "release": [
+          "*"
+        ]
       }
     }
   ],
@@ -107,6 +109,10 @@
     "local": null,
     "post": null,
     "pre": null,
-    "release": [2, 0, 2]
+    "release": [
+      2,
+      0,
+      2
+    ]
   }
 }
