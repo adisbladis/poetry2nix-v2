@@ -10,6 +10,8 @@ let
   fixtures = {
     trivial = mkFixture ./fixtures/trivial;
     kitchen-sink = mkFixture ./fixtures/kitchen-sink/a;
+    withMarker = mkFixture ./fixtures/with-marker;
+    multiChoiceNestedDependent = mkFixture ./fixtures/multi-choice-nested/dependent-package;
   };
 
   findPkg = pkgName: fixture: lib.findFirst (pkg: pkg.name == pkgName) (throw "not found") fixture.lock.package;
@@ -187,7 +189,17 @@ in
             sdist = { file = "requests-2.32.3.tar.gz"; hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"; };
             wheel = { file = "requests-2.32.3-py3-none-any.whl"; hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"; };
           in
-          { dependencies = { certifi = ">=2017.4.17"; charset-normalizer = ">=2,<4"; idna = ">=2.5,<4"; urllib3 = ">=1.21.1,<3"; }; description = "Python HTTP for Humans."; develop = false; extras = { socks = [{ conditions = [ ]; extras = [ ]; markers = null; name = "pysocks"; url = null; }]; use-chardet-on-py3 = [{ conditions = [ ]; extras = [ ]; markers = null; name = "chardet"; url = null; }]; }; files = { all = { "requests-2.32.3-py3-none-any.whl" = wheel; "requests-2.32.3.tar.gz" = sdist; }; eggs = [ ]; others = [ ]; sdists = [ sdist ]; wheels = [ wheel ]; }; name = "requests"; optional = false; python-versions = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 8 ]; }; }]; source = { }; version = "2.32.3"; version' = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 32 3 ]; }; };
+            null;
+      };
+
+      testMultiChoicePackage = {
+        expr = lock.parsePackage (findPkg "multi-choice-package" fixtures.multiChoiceNestedDependent);
+        expected = null;
+      };
+
+      testWithMarker = {
+        expr = lock.parsePackage (findPkg "pytest" fixtures.withMarker);
+        expected = null;
       };
 
       testURLSource = {

@@ -1,23 +1,25 @@
 { lib, pyproject-nix, ... }:
 
 let
-  inherit (builtins) head nixVersion;
-  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten filter isString match split;
+  inherit (builtins) head nixVersion typeOf;
+  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten filter isString match split isList isAttrs toList;
 
-  inherit (pyproject-nix.lib) pypa pep440 pep508 poetry;
-  libeggs = pyproject-nix.lib.eggs;
-  libpoetry = pyproject-nix.lib.poetry;
+  inherit (pyproject-nix.lib) pep440 pep508 poetry;
+  inherit (pyproject-nix.lib.poetry) parseVersionConds;
+  inherit (pyproject-nix.lib.eggs) selectEggs parseEggFileName isEggFileName;
+  inherit (pyproject-nix.lib.pypa) isWheelFileName isSdistFileName selectWheels parseWheelFileName;
+
 
   # Select the best compatible wheel from a list of wheels
-  selectWheels = wheels: python:
+  selectWheels' = wheels: python:
     let
       # Filter wheels based on interpreter
-      compatibleWheels = pypa.selectWheels python.stdenv.targetPlatform python (map (fileEntry: pypa.parseWheelFileName fileEntry.file) wheels);
+      compatibleWheels = selectWheels python.stdenv.targetPlatform python (map (fileEntry: parseWheelFileName fileEntry.file) wheels);
     in
     map (wheel: wheel.filename) compatibleWheels;
 
   # Select the best compatible egg from a list of eggs
-  selectEggs = eggs': python: map (egg: egg.filename) (libeggs.selectEggs python (map (egg: libeggs.parseEggFileName egg.file) eggs'));
+  selectEggs' = eggs': python: map (egg: egg.filename) (selectEggs python (map (egg: parseEggFileName egg.file) eggs'));
 
   optionalHead = list: if length list > 0 then head list else null;
 
@@ -91,9 +93,9 @@ lib.fix (self: {
     # List of files from poetry.lock -> package segment
     files:
     let
-      wheels = lib.lists.partition (f: pypa.isWheelFileName f.file) files;
-      sdists = lib.lists.partition (f: pypa.isSdistFileName f.file) wheels.wrong;
-      eggs = lib.lists.partition (f: libeggs.isEggFileName f.file) sdists.wrong;
+      wheels = lib.lists.partition (f: isWheelFileName f.file) files;
+      sdists = lib.lists.partition (f: isSdistFileName f.file) wheels.wrong;
+      eggs = lib.lists.partition (f: isEggFileName f.file) sdists.wrong;
     in
     {
       # Group into precedence orders
@@ -118,6 +120,32 @@ lib.fix (self: {
           matchExtra = builtins.match "(.+) .+";
         in
         extra: pep508.parseString (let m = matchExtra extra; in if m != null then head m else extra);
+
+
+      # Poetry.lock contains a mixed style of dependency declarations:
+      #
+      # [package.dependencies]
+      # colorama = {version = "*", markers = "sys_platform == \"win32\""}
+      # pluggy = ">=1.5,<2"
+      # arpeggio = [
+      #     {version = "2.0.2", markers = "python_version >= \"3.7\" and python_version < \"3.10\""},
+      #     {version = "2.0.1", markers = "python_version >= \"3.10\" and python_version < \"3.11\""},
+      # ]
+      #
+      # Parse and normalize these types into list form.
+      # colorama = [ { version = parseVersionConds dep.version; markers = pep508.parseMarkers dep.markers;  } ];
+      parseDependency = dep:
+        if isString dep then toList {
+          version = parseVersionConds dep;
+          markers = null;
+        }
+        else if isAttrs dep then toList {
+          markers = if dep ? markers then pep508.parseMarkers dep.markers else null;
+          version = if dep ? version then parseVersionConds dep.version else null;
+        }
+        else if isList dep then map parseDependency dep
+        else throw "Unhandled dependency type: ${typeOf dep}";
+
     in
     { name
     , version
@@ -134,9 +162,9 @@ lib.fix (self: {
       inherit name version description optional source develop;
       version' = pep440.parseVersion version;
       files = self.partitionFiles files;
-      inherit dependencies;
+      dependencies = mapAttrs (_: parseDependency) dependencies;
       extras = mapAttrs (_: extras: map parseExtra extras) extras;
-      python-versions = libpoetry.parseVersionConds python-versions;
+      python-versions = parseVersionConds python-versions;
     };
 
   mkPackage =
@@ -171,20 +199,20 @@ lib.fix (self: {
       # Select filename based on sdist/wheel preference order.
       filenames =
         let
-          selectedWheels = selectWheels files.wheels python;
+          selectedWheels = selectWheels' files.wheels python;
           selectedSdists = map (file: file.file) files.sdists;
         in
         (
           if preferWheel then selectedWheels ++ selectedSdists
           else selectedSdists ++ selectedWheels
-        ) ++ selectEggs files.eggs python ++ map (file: file.file) files.others;
+        ) ++ selectEggs' files.eggs python ++ map (file: file.file) files.others;
 
       filename = optionalHead filenames;
 
       format =
-        if filename == null || pypa.isSdistFileName filename then "pyproject"
-        else if pypa.isWheelFileName filename then "wheel"
-        else if libeggs.isEggFileName filename then "egg"
+        if filename == null || isSdistFileName filename then "pyproject"
+        else if isWheelFileName filename then "wheel"
+        else if isEggFileName filename then "egg"
         else throw "Could not infer format from filename '${filename}'";
 
       src = self.fetchPackage {
@@ -241,7 +269,7 @@ lib.fix (self: {
               else if hasPrefix "manylinux_" tag then pythonManylinuxPackages.manylinux2014
               else [ ]  # Any other type of wheel don't need manylinux inputs
             ))
-            (pypa.parseWheelFileName filename).platformTags
+            (parseWheelFileName filename).platformTags
         )));
     });
 
