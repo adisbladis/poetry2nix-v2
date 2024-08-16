@@ -2,9 +2,9 @@
 
 let
   inherit (builtins) head nixVersion typeOf;
-  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten filter isString match split isList isAttrs toList;
+  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten isString match isList isAttrs toList elemAt;
 
-  inherit (pyproject-nix.lib) pep440 pep508 poetry;
+  inherit (pyproject-nix.lib) pep440 pep508;
   inherit (pyproject-nix.lib.poetry) parseVersionConds;
   inherit (pyproject-nix.lib.eggs) selectEggs parseEggFileName isEggFileName;
   inherit (pyproject-nix.lib.pypa) isWheelFileName isSdistFileName selectWheels parseWheelFileName;
@@ -113,14 +113,22 @@ lib.fix (self: {
   */
   parsePackage =
     let
-      # Poetry extras contains non-pep508 version bounds that looks like `attrs (>=19.2)`
-      # We need to strip that before passing them on to pep508.parseString.
+      # Poetry extras are not in PEP-508 form:
+      # cov = ["attrs[tests]", "coverage[toml] (>=5.3)"]
+      #
+      # Parse & normalize into format as returned by pep508.parseString
       parseExtra =
         let
-          matchExtra = builtins.match "(.+) .+";
+          matchCond = builtins.match "(.+) \\((.+)\\)";
         in
-        extra: pep508.parseString (let m = matchExtra extra; in if m != null then head m else extra);
-
+        extra:
+        let
+          m = matchCond extra;
+        in
+        if m != null then pep508.parseString (elemAt m 0) // {
+          conditions = parseVersionConds (elemAt m 1);
+        }
+        else pep508.parseString extra;
 
       # Poetry.lock contains a mixed style of dependency declarations:
       #
@@ -135,14 +143,18 @@ lib.fix (self: {
       # Parse and normalize these types into list form.
       # colorama = [ { version = parseVersionConds dep.version; markers = pep508.parseMarkers dep.markers;  } ];
       parseDependency = dep:
-        if isString dep then toList {
-          version = parseVersionConds dep;
-          markers = null;
-        }
-        else if isAttrs dep then toList {
-          markers = if dep ? markers then pep508.parseMarkers dep.markers else null;
-          version = if dep ? version then parseVersionConds dep.version else null;
-        }
+        if isString dep then
+          toList
+            {
+              version = parseVersionConds dep;
+              markers = null;
+            }
+        else if isAttrs dep then
+          toList
+            {
+              markers = if dep ? markers then pep508.parseMarkers dep.markers else null;
+              version = if dep ? version then parseVersionConds dep.version else null;
+            }
         else if isList dep then map parseDependency dep
         else throw "Unhandled dependency type: ${typeOf dep}";
 

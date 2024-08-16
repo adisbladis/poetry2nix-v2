@@ -1,0 +1,228 @@
+{
+  "dependencies": {
+    "certifi": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [2017, 4, 17]
+            }
+          }
+        ]
+      }
+    ],
+    "charset-normalizer": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [2]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [4]
+            }
+          }
+        ]
+      }
+    ],
+    "idna": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [2, 5]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [4]
+            }
+          }
+        ]
+      }
+    ],
+    "urllib3": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [1, 21, 1]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [3]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "description": "Python HTTP for Humans.",
+  "develop": false,
+  "extras": {
+    "socks": [
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [1, 5, 6]
+            }
+          },
+          {
+            "op": "!=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [1, 5, 7]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "pysocks",
+        "url": null
+      }
+    ],
+    "use-chardet-on-py3": [
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [3, 0, 2]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [6]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "chardet",
+        "url": null
+      }
+    ]
+  },
+  "files": {
+    "all": {
+      "requests-2.32.3-py3-none-any.whl": {
+        "file": "requests-2.32.3-py3-none-any.whl",
+        "hash": "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"
+      },
+      "requests-2.32.3.tar.gz": {
+        "file": "requests-2.32.3.tar.gz",
+        "hash": "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"
+      }
+    },
+    "eggs": [],
+    "others": [],
+    "sdists": [
+      {
+        "file": "requests-2.32.3.tar.gz",
+        "hash": "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"
+      }
+    ],
+    "wheels": [
+      {
+        "file": "requests-2.32.3-py3-none-any.whl",
+        "hash": "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"
+      }
+    ]
+  },
+  "name": "requests",
+  "optional": false,
+  "python-versions": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [3, 8]
+      }
+    }
+  ],
+  "source": {},
+  "version": "2.32.3",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [2, 32, 3]
+  }
+}

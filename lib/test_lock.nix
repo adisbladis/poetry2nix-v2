@@ -16,6 +16,13 @@ let
 
   findPkg = pkgName: fixture: lib.findFirst (pkg: pkg.name == pkgName) (throw "not found") fixture.lock.package;
 
+  # Expected saved as JSON files
+  expected =
+    let
+      expected' = lib.mapAttrs (n: _: lib.importJSON (./. + "/expected/${n}")) (lib.filterAttrs (filename: type: lib.hasSuffix ".json" filename && type == "regular") (builtins.readDir ./expected));
+    in
+    test: expected'.${"${test}.json"};
+
 in
 
 {
@@ -184,31 +191,27 @@ in
     {
       testPackage = {
         expr = testPkg "requests";
-        expected =
-          let
-            sdist = { file = "requests-2.32.3.tar.gz"; hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"; };
-            wheel = { file = "requests-2.32.3-py3-none-any.whl"; hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"; };
-          in
-            null;
+        expected = expected "parsePackage.testPackage";
       };
 
       testMultiChoicePackage = {
         expr = lock.parsePackage (findPkg "multi-choice-package" fixtures.multiChoiceNestedDependent);
-        expected = null;
+        expected = expected "parsePackage.testMultiChoicePackage";
       };
 
       testWithMarker = {
         expr = lock.parsePackage (findPkg "pytest" fixtures.withMarker);
-        expected = null;
+        expected = expected "parsePackage.testWithMarker";
+      };
+
+      testExtras = {
+        expr = testPkg "urllib3";
+        expected = expected "parsePackage.testExtras";
       };
 
       testURLSource = {
         expr = testPkg "Arpeggio";
-        expected =
-          let
-            wheel = { file = "Arpeggio-2.0.2-py2.py3-none-any.whl"; hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"; };
-          in
-          { dependencies = { }; description = "Packrat parser interpreter"; develop = false; extras = { dev = [{ conditions = [ ]; extras = [ ]; markers = null; name = "mike"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "mkdocs"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "twine"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "wheel"; url = null; }]; test = [{ conditions = [ ]; extras = [ ]; markers = null; name = "coverage"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "coveralls"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "flake8"; url = null; } { conditions = [ ]; extras = [ ]; markers = null; name = "pytest"; url = null; }]; }; files = { all = { "Arpeggio-2.0.2-py2.py3-none-any.whl" = wheel; }; eggs = [ ]; others = [ ]; sdists = [ ]; wheels = [ wheel ]; }; name = "Arpeggio"; optional = false; python-versions = [{ op = ""; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ "*" ]; }; }]; source = { type = "url"; url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"; }; version = "2.0.2"; version' = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 2 0 2 ]; }; };
+        expected = expected "parsePackage.testURLSource";
       };
     };
 
