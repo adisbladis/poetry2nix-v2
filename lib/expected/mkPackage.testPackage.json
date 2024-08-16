@@ -1,21 +1,12 @@
 {
-  "dependencies": [
-    "certifi",
-    "charset-normalizer",
-    "idna",
-    "urllib3"
-  ],
+  "dependencies": ["certifi", "charset-normalizer", "idna", "urllib3"],
   "format": "pyproject",
   "meta": {
     "description": "Python HTTP for Humans."
   },
   "optional-dependencies": {
-    "socks": [
-      "pysocks"
-    ],
-    "use-chardet-on-py3": [
-      "chardet"
-    ]
+    "socks": ["pysocks"],
+    "use-chardet-on-py3": ["chardet"]
   },
   "pname": "requests",
   "src": {},

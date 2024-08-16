@@ -1,0 +1,22 @@
+{
+  "dependencies": ["iniconfig", "packaging", "pluggy"],
+  "format": "pyproject",
+  "meta": {
+    "description": "pytest: simple powerful testing with Python"
+  },
+  "optional-dependencies": {
+    "dev": [
+      "argcomplete",
+      "attrs",
+      "hypothesis",
+      "mock",
+      "pygments",
+      "requests",
+      "setuptools",
+      "xmlschema"
+    ]
+  },
+  "pname": "pytest",
+  "src": {},
+  "version": "8.3.2"
+}

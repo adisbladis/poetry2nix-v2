@@ -12,11 +12,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                2017,
-                4,
-                17
-              ]
+              "release": [2017, 4, 17]
             }
           }
         ]
@@ -34,9 +30,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                2
-              ]
+              "release": [2]
             }
           },
           {
@@ -47,9 +41,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                4
-              ]
+              "release": [4]
             }
           }
         ]
@@ -67,10 +59,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                2,
-                5
-              ]
+              "release": [2, 5]
             }
           },
           {
@@ -81,9 +70,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                4
-              ]
+              "release": [4]
             }
           }
         ]
@@ -101,11 +88,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                1,
-                21,
-                1
-              ]
+              "release": [1, 21, 1]
             }
           },
           {
@@ -116,9 +99,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                3
-              ]
+              "release": [3]
             }
           }
         ]
@@ -139,11 +120,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                1,
-                5,
-                6
-              ]
+              "release": [1, 5, 6]
             }
           },
           {
@@ -154,11 +131,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                1,
-                5,
-                7
-              ]
+              "release": [1, 5, 7]
             }
           }
         ],
@@ -179,11 +152,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                3,
-                0,
-                2
-              ]
+              "release": [3, 0, 2]
             }
           },
           {
@@ -194,9 +163,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                6
-              ]
+              "release": [6]
             }
           }
         ],
@@ -244,10 +211,7 @@
         "local": null,
         "post": null,
         "pre": null,
-        "release": [
-          3,
-          8
-        ]
+        "release": [3, 8]
       }
     }
   ],
@@ -259,10 +223,6 @@
     "local": null,
     "post": null,
     "pre": null,
-    "release": [
-      2,
-      32,
-      3
-    ]
+    "release": [2, 32, 3]
   }
 }

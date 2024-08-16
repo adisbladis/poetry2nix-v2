@@ -232,5 +232,10 @@ in
         expected = expected "mkPackage.testPackage";
       };
 
+      # A package with markers
+      testWithMarker = {
+        expr = mkPackage (findPkg "pytest" fixtures.withMarker);
+        expected = expected "mkPackage.testWithMarker";
+      };
     };
 }

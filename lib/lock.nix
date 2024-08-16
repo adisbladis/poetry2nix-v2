@@ -241,6 +241,15 @@ lib.fix (self: {
         in
         [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extra.extras;
 
+      # Filter dependencies by PEP-508 environment
+      dependencies' =
+        lib.filterAttrs
+          (_name: specs: length specs > 0)
+          (mapAttrs (_name: deps: lib.filter (dep: dep.markers == null || pep508.evalMarkers __poetry2nix.environ dep.markers) deps) dependencies);
+
+      # Filter extras by PEP-508 environment
+      filterExtras = extras: lib.filter (extra: extra.markers == null || pep508.evalMarkers __poetry2nix.environ extra.markers) extras;
+
     in
     buildPythonPackage ({
       pname = name;
@@ -253,9 +262,9 @@ lib.fix (self: {
             extras = spec.extras or [ ];
           in
           [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extras)
-        dependencies);
+        (builtins.deepSeq dependencies' dependencies'));
 
-      optional-dependencies = mapAttrs (_: extras: concatMap getExtra extras) extras;
+      optional-dependencies = mapAttrs (_: extras: concatMap getExtra (filterExtras extras)) extras;
 
       meta = {
         inherit description;

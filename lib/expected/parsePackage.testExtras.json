@@ -14,11 +14,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                1,
-                0,
-                9
-              ]
+              "release": [1, 0, 9]
             }
           }
         ],
@@ -37,11 +33,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                0,
-                8,
-                0
-              ]
+              "release": [0, 8, 0]
             }
           }
         ],
@@ -62,9 +54,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                4
-              ]
+              "release": [4]
             }
           },
           {
@@ -75,9 +65,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                5
-              ]
+              "release": [5]
             }
           }
         ],
@@ -98,11 +86,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                1,
-                5,
-                6
-              ]
+              "release": [1, 5, 6]
             }
           },
           {
@@ -113,11 +97,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                1,
-                5,
-                7
-              ]
+              "release": [1, 5, 7]
             }
           },
           {
@@ -128,10 +108,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                2,
-                0
-              ]
+              "release": [2, 0]
             }
           }
         ],
@@ -152,11 +129,7 @@
               "local": null,
               "post": null,
               "pre": null,
-              "release": [
-                0,
-                18,
-                0
-              ]
+              "release": [0, 18, 0]
             }
           }
         ],
@@ -204,10 +177,7 @@
         "local": null,
         "post": null,
         "pre": null,
-        "release": [
-          3,
-          8
-        ]
+        "release": [3, 8]
       }
     }
   ],
@@ -219,10 +189,6 @@
     "local": null,
     "post": null,
     "pre": null,
-    "release": [
-      2,
-      2,
-      2
-    ]
+    "release": [2, 2, 2]
   }
 }

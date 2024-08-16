@@ -2,8 +2,5 @@
   "file": "Arpeggio-2.0.2.tar.gz",
   "hash": "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700",
   "pname": "arpeggio",
-  "urls": [
-    "https://pypi.org/simple",
-    "https://foo.bar/simple/"
-  ]
+  "urls": ["https://pypi.org/simple", "https://foo.bar/simple/"]
 }
