@@ -2,7 +2,7 @@
 
 let
   inherit (builtins) head nixVersion typeOf;
-  inherit (lib) length listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten isString match isList isAttrs toList elemAt;
+  inherit (lib) length filter listToAttrs nameValuePair optionalAttrs versionAtLeast mapAttrs concatMap mapAttrsToList concatLists hasPrefix flatten isString match isList isAttrs toList elemAt filterAttrs;
 
   inherit (pyproject-nix.lib) pep440 pep508;
   inherit (pyproject-nix.lib.poetry) parseVersionConds;
@@ -243,13 +243,11 @@ lib.fix (self: {
         [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extra.extras;
 
       # Filter dependencies by PEP-508 environment
+      filterDeps = filter (dep: dep.markers == null || pep508.evalMarkers __poetry2nix.environ dep.markers);
       dependencies' =
-        lib.filterAttrs
+        filterAttrs
           (_name: specs: length specs > 0)
-          (mapAttrs (_name: deps: lib.filter (dep: dep.markers == null || pep508.evalMarkers __poetry2nix.environ dep.markers) deps) dependencies);
-
-      # Filter extras by PEP-508 environment
-      filterExtras = extras: lib.filter (extra: extra.markers == null || pep508.evalMarkers __poetry2nix.environ extra.markers) extras;
+          (mapAttrs (_name: filterDeps) dependencies);
 
     in
     buildPythonPackage ({
@@ -263,9 +261,9 @@ lib.fix (self: {
             extras = spec.extras or [ ];
           in
           [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extras)
-        (builtins.deepSeq dependencies' dependencies'));
+        dependencies');
 
-      optional-dependencies = mapAttrs (_: extras: concatMap getExtra (filterExtras extras)) extras;
+      optional-dependencies = mapAttrs (_: extras: concatMap getExtra (filterDeps extras)) extras;
 
       meta = {
         inherit description;
@@ -282,7 +280,7 @@ lib.fix (self: {
 
       buildInputs =
         # Add manylinux platform dependencies.
-        lib.optionals (stdenv.isLinux && stdenv.hostPlatform.libc == "glibc") (lib.unique (lib.flatten (
+        lib.optionals (stdenv.isLinux && stdenv.hostPlatform.libc == "glibc") (lib.unique (concatLists (
           map
             (tag: (
               if hasPrefix "manylinux1" tag then pythonManylinuxPackages.manylinux1
