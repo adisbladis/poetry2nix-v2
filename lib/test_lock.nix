@@ -66,15 +66,11 @@ in
           assert lib.hasAttr "outPath" src;
           {
             inherit (src)
-              ref
-              allRefs
               submodules
               rev
               ;
           };
         expected = {
-          allRefs = true;
-          ref = "refs/tags/20.3.1";
           rev = "f94a429e17b450ac2d3432f46492416ac2cf58ad";
           submodules = true;
         };

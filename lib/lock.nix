@@ -79,17 +79,15 @@ lib.fix (self: {
 
     in
     if sourceType == "git" then
-      (
-        builtins.fetchGit {
-          inherit (source) url;
-          rev = source.resolved_reference;
-        }
-        // optionalAttrs (source ? reference) { ref = "refs/tags/${source.reference}"; }
-        // optionalAttrs (versionAtLeast nixVersion "2.4") {
-          allRefs = true;
-          submodules = true;
-        }
-      )
+      builtins.fetchGit ({
+        inherit (source) url;
+        rev = source.resolved_reference;
+      }
+      // optionalAttrs (source ? reference) { ref = "refs/tags/${source.reference}"; }
+      // optionalAttrs (versionAtLeast nixVersion "2.4") {
+        allRefs = true;
+        submodules = true;
+      })
     else if sourceType == "url" then
       (fetchurl {
         url =
@@ -210,8 +208,12 @@ lib.fix (self: {
     };
 
   mkPackage =
-    # Pyproject.nix project (loadPoetryPyproject)
-    { project, sources }:
+    {
+      # Pyproject.nix project (loadPoetryPyproject)
+      project,
+      # Parsed tool.poetry.source from pyproject.toml
+      sources,
+    }:
     # Package segment parsed by parsePackage
     {
       name,
