@@ -1,6 +1,6 @@
 {
   lib,
-  lock,
+  metadata2,
   pyproject-nix,
   sources,
   pkgs,
@@ -44,7 +44,7 @@ in
       projectRoot = ./fixtures/kitchen-sink/a;
       fetchPackage =
         args:
-        lock.fetchPackage (
+        metadata2.fetchPackage (
           args
           // {
             inherit (pkgs) fetchurl fetchPypiLegacy;
@@ -59,7 +59,7 @@ in
         expr =
           let
             src = fetchPackage {
-              package = lock.parsePackage (findPackage "pip");
+              package = metadata2.parsePackage (findPackage "pip");
               sources = { };
             };
           in
@@ -80,7 +80,7 @@ in
         expr =
           let
             src = fetchPackage {
-              package = lock.parsePackage (findPackage "attrs");
+              package = metadata2.parsePackage (findPackage "attrs");
               filename = "attrs-23.1.0.tar.gz";
               sources = { };
             };
@@ -98,7 +98,7 @@ in
       testURL = {
         expr =
           (fetchPackage {
-            package = lock.parsePackage (findPackage "Arpeggio");
+            package = metadata2.parsePackage (findPackage "Arpeggio");
             filename = "Arpeggio-2.0.2-py2.py3-none-any.whl";
             sources = { };
           }).passthru;
@@ -112,7 +112,7 @@ in
           let
             src =
               (fetchPackage {
-                package = lock.parsePackage (findPackage "requests");
+                package = metadata2.parsePackage (findPackage "requests");
                 filename = "requests-2.32.3.tar.gz";
                 sources = sources.mkSources { project = { }; }; # Dummy empty project
               }).passthru;
@@ -127,7 +127,7 @@ in
     let
       fetchPackage =
         args:
-        lock.fetchPackage (
+        metadata2.fetchPackage (
           args
           // {
             fetchPypiLegacy = lib.id;
@@ -150,7 +150,7 @@ in
         in
         fetchPackage {
           inherit projectRoot filename;
-          package = lock.parsePackage (
+          package = metadata2.parsePackage (
             lib.findFirst (pkg: pkg.name == name) (throw "package '${name} not found") poetryLock.package
           );
           sources = sources.mkSources { inherit project; };
@@ -181,14 +181,14 @@ in
 
   partitionFiles = {
     testSimple = {
-      expr = lock.partitionFiles (findPkg "arpeggio" fixtures.trivial).files;
+      expr = metadata2.partitionFiles (findPkg "arpeggio" fixtures.trivial).files;
       expected = expected "partitionFiles.testSimple";
     };
   };
 
   parsePackage =
     let
-      testPkg = pkgName: (lock.parsePackage (findPkg pkgName fixtures.kitchen-sink));
+      testPkg = pkgName: (metadata2.parsePackage (findPkg pkgName fixtures.kitchen-sink));
     in
     {
       testPackage = {
@@ -197,12 +197,12 @@ in
       };
 
       testMultiChoicePackage = {
-        expr = lock.parsePackage (findPkg "multi-choice-package" fixtures.multiChoiceNestedDependent);
+        expr = metadata2.parsePackage (findPkg "multi-choice-package" fixtures.multiChoiceNestedDependent);
         expected = expected "parsePackage.testMultiChoicePackage";
       };
 
       testWithMarker = {
-        expr = lock.parsePackage (findPkg "pytest" fixtures.withMarker);
+        expr = metadata2.parsePackage (findPkg "pytest" fixtures.withMarker);
         expected = expected "parsePackage.testWithMarker";
       };
 
@@ -230,10 +230,10 @@ in
         let
           attrs =
             python.pkgs.callPackage
-              (lock.mkPackage {
+              (metadata2.mkPackage {
                 sources = sources.mkSources { inherit project; };
                 inherit project;
-              } (lock.parsePackage pkg))
+              } (metadata2.parsePackage pkg))
               {
                 buildPythonPackage = lib.id;
 

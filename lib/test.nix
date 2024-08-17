@@ -1,3 +1,4 @@
+
 {
   lib,
   pyproject-nix,
@@ -20,7 +21,7 @@ let
 
 in
 lib.fix (self: {
-  lock = callTest ./test_lock.nix;
+  metadata2 = callTest ./test_metadata2.nix;
   sources = callTest ./test_sources.nix;
 
   # Yo dawg, I heard you like tests...

@@ -6,7 +6,7 @@ in
 fix (
   self:
   mapAttrs (_: path: import path ({ inherit lib pyproject-nix; } // self)) {
-    lock = ./lock.nix;
+    metadata2 = ./metadata2.nix;
     sources = ./sources.nix;
   }
 )
