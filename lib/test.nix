@@ -1,4 +1,3 @@
-
 {
   lib,
   pyproject-nix,
@@ -23,6 +22,7 @@ in
 lib.fix (self: {
   metadata2 = callTest ./test_metadata2.nix;
   sources = callTest ./test_sources.nix;
+  overlay = callTest ./test_overlay.nix;
 
   # Yo dawg, I heard you like tests...
   #

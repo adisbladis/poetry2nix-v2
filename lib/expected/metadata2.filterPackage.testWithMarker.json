@@ -1,0 +1,244 @@
+{
+  "dependencies": {
+    "iniconfig": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": "",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                "*"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "packaging": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": "",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                "*"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "pluggy": [
+      {
+        "markers": null,
+        "version": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                1,
+                5
+              ]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                2
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "description": "pytest: simple powerful testing with Python",
+  "develop": false,
+  "extras": {
+    "dev": [
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "argcomplete",
+        "url": null
+      },
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                19,
+                2
+              ]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "attrs",
+        "url": null
+      },
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                3,
+                56
+              ]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "hypothesis",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "mock",
+        "url": null
+      },
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                2,
+                7,
+                2
+              ]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "pygments",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "requests",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "setuptools",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "xmlschema",
+        "url": null
+      }
+    ]
+  },
+  "files": {
+    "all": {
+      "pytest-8.3.2-py3-none-any.whl": {
+        "file": "pytest-8.3.2-py3-none-any.whl",
+        "hash": "sha256:4ba08f9ae7dcf84ded419494d229b48d0903ea6407b030eaec46df5e6a73bba5"
+      },
+      "pytest-8.3.2.tar.gz": {
+        "file": "pytest-8.3.2.tar.gz",
+        "hash": "sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce"
+      }
+    },
+    "eggs": [],
+    "others": [],
+    "sdists": [
+      {
+        "file": "pytest-8.3.2.tar.gz",
+        "hash": "sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce"
+      }
+    ],
+    "wheels": [
+      {
+        "file": "pytest-8.3.2-py3-none-any.whl",
+        "hash": "sha256:4ba08f9ae7dcf84ded419494d229b48d0903ea6407b030eaec46df5e6a73bba5"
+      }
+    ]
+  },
+  "name": "pytest",
+  "optional": false,
+  "python-versions": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [
+          3,
+          8
+        ]
+      }
+    }
+  ],
+  "source": {},
+  "version": "8.3.2",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      8,
+      3,
+      2
+    ]
+  }
+}

@@ -8,21 +8,22 @@
 }:
 
 let
+  inherit (pyproject-nix.lib) pep508 pep621;
+  inherit (pyproject-nix.lib.project) loadPoetryPyproject;
 
-  mkFixture = path: {
-    pyproject = lib.importTOML (path + "/pyproject.toml");
-    lock = lib.importTOML (path + "/poetry.lock");
-  };
+  mkFixture = path: loadPoetryPyproject { projectRoot = path; };
 
   fixtures = {
     trivial = mkFixture ./fixtures/trivial;
+    simple = mkFixture ./fixtures/simple;
     kitchen-sink = mkFixture ./fixtures/kitchen-sink/a;
     withMarker = mkFixture ./fixtures/with-marker;
     multiChoiceNestedDependent = mkFixture ./fixtures/multi-choice-nested/dependent-package;
   };
 
   findPkg =
-    pkgName: fixture: lib.findFirst (pkg: pkg.name == pkgName) (throw "not found") fixture.lock.package;
+    pkgName: fixture:
+    lib.findFirst (pkg: pkg.name == pkgName) (throw "not found") fixture.poetryLock.package;
 
   # Expected saved as JSON files
   expected =
@@ -38,6 +39,80 @@ let
 in
 
 {
+  resolveDependencies = {
+    testSimple =
+      let
+        environ = pep508.mkEnviron pkgs.python312;
+        project = fixtures.simple;
+      in
+      {
+        expr = metadata2.resolveDependencies { inherit project; } {
+          inherit environ;
+          dependencies = pep621.filterDependencies {
+            inherit (project) dependencies;
+            inherit environ;
+            extras = [ ];
+          };
+        };
+        expected = expected "metadata2.resolveDependencies.testSimple";
+      };
+
+    testWithMarker =
+      let
+        environ = pep508.mkEnviron pkgs.python312;
+        project = fixtures.withMarker;
+      in
+      {
+        expr = metadata2.resolveDependencies { inherit project; } {
+          inherit environ;
+          dependencies = pep621.filterDependencies {
+            inherit (project) dependencies;
+            inherit environ;
+            extras = [ ];
+          };
+        };
+        expected = expected "metadata2.resolveDependencies.testWithMarker";
+      };
+
+    testMultiChoiceNestedDependent =
+      let
+        environ = pep508.mkEnviron pkgs.python310;
+        project = fixtures.multiChoiceNestedDependent;
+      in
+      {
+        expr = metadata2.resolveDependencies { inherit project; } {
+          inherit environ;
+          dependencies = pep621.filterDependencies {
+            inherit (project) dependencies;
+            inherit environ;
+            extras = [ ];
+          };
+        };
+        expected = expected "metadata2.resolveDependencies.testMultiChoiceNestedDependent";
+      };
+
+  };
+
+  filterPackage =
+    let
+      environ = pep508.mkEnviron pkgs.python312;
+    in
+    {
+      testSimple = {
+        expr = metadata2.filterPackage environ (
+          metadata2.parsePackage (findPkg "requests" fixtures.simple)
+        );
+        expected = expected "metadata2.filterPackage.testSimple";
+      };
+
+      testWithMarker = {
+        expr = metadata2.filterPackage environ (
+          metadata2.parsePackage (findPkg "pytest" fixtures.withMarker)
+        );
+        expected = expected "metadata2.filterPackage.testWithMarker";
+      };
+    };
+
   fetchPackage =
     let
       poetryLock = lib.importTOML ./fixtures/kitchen-sink/a/poetry.lock;
@@ -65,10 +140,7 @@ in
           in
           assert lib.hasAttr "outPath" src;
           {
-            inherit (src)
-              submodules
-              rev
-              ;
+            inherit (src) submodules rev;
           };
         expected = {
           rev = "f94a429e17b450ac2d3432f46492416ac2cf58ad";
@@ -228,21 +300,10 @@ in
       mkPackage =
         pkg:
         let
-          attrs =
-            python.pkgs.callPackage
-              (metadata2.mkPackage {
-                sources = sources.mkSources { inherit project; };
-                inherit project;
-              } (metadata2.parsePackage pkg))
-              {
-                buildPythonPackage = lib.id;
-
-                __poetry2nix = {
-                  environ = pyproject-nix.lib.pep508.mkEnviron python;
-                  pyVersion = pyproject-nix.lib.pep440.parseVersion python.version;
-                  preferWheels = false;
-                };
-              };
+          attrs = python.pkgs.callPackage (metadata2.mkPackage {
+            sources = sources.mkSources { inherit project; };
+            inherit project;
+          } (metadata2.parsePackage pkg)) { buildPythonPackage = lib.id; };
 
           cleaned = removeAttrs attrs [
             "override"

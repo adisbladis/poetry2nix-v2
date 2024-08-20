@@ -1,0 +1,260 @@
+{
+  "arpeggio": {
+    "dependencies": {},
+    "description": "Packrat parser interpreter",
+    "develop": false,
+    "extras": {
+      "dev": [
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "mike",
+          "url": null
+        },
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "mkdocs",
+          "url": null
+        },
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "twine",
+          "url": null
+        },
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "wheel",
+          "url": null
+        }
+      ],
+      "test": [
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "coverage",
+          "url": null
+        },
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "coveralls",
+          "url": null
+        },
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "flake8",
+          "url": null
+        },
+        {
+          "conditions": [],
+          "extras": [],
+          "markers": null,
+          "name": "pytest",
+          "url": null
+        }
+      ]
+    },
+    "files": {
+      "all": {
+        "Arpeggio-2.0.1-py2.py3-none-any.whl": {
+          "file": "Arpeggio-2.0.1-py2.py3-none-any.whl",
+          "hash": "sha256:5372cf9daee84bd695e99f17371c844504ead3b1d96c70b95dfc54f957fe69de"
+        },
+        "Arpeggio-2.0.1.tar.gz": {
+          "file": "Arpeggio-2.0.1.tar.gz",
+          "hash": "sha256:8dfee59d546e0192e3c47f630f08f12ba7cf542caf157c58d516a193e3bfb854"
+        }
+      },
+      "eggs": [],
+      "others": [],
+      "sdists": [
+        {
+          "file": "Arpeggio-2.0.1.tar.gz",
+          "hash": "sha256:8dfee59d546e0192e3c47f630f08f12ba7cf542caf157c58d516a193e3bfb854"
+        }
+      ],
+      "wheels": [
+        {
+          "file": "Arpeggio-2.0.1-py2.py3-none-any.whl",
+          "hash": "sha256:5372cf9daee84bd695e99f17371c844504ead3b1d96c70b95dfc54f957fe69de"
+        }
+      ]
+    },
+    "name": "arpeggio",
+    "optional": false,
+    "python-versions": [
+      {
+        "op": "",
+        "version": {
+          "dev": null,
+          "epoch": 0,
+          "local": null,
+          "post": null,
+          "pre": null,
+          "release": [
+            "*"
+          ]
+        }
+      }
+    ],
+    "source": {},
+    "version": "2.0.1",
+    "version'": {
+      "dev": null,
+      "epoch": 0,
+      "local": null,
+      "post": null,
+      "pre": null,
+      "release": [
+        2,
+        0,
+        1
+      ]
+    }
+  },
+  "multi-choice-package": {
+    "dependencies": {
+      "arpeggio": [
+        {
+          "markers": {
+            "lhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "python_version"
+              },
+              "op": ">=",
+              "rhs": {
+                "type": "version",
+                "value": {
+                  "dev": null,
+                  "epoch": 0,
+                  "local": null,
+                  "post": null,
+                  "pre": null,
+                  "release": [
+                    3,
+                    10
+                  ]
+                }
+              },
+              "type": "compare"
+            },
+            "op": "and",
+            "rhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "python_version"
+              },
+              "op": "<",
+              "rhs": {
+                "type": "version",
+                "value": {
+                  "dev": null,
+                  "epoch": 0,
+                  "local": null,
+                  "post": null,
+                  "pre": null,
+                  "release": [
+                    3,
+                    11
+                  ]
+                }
+              },
+              "type": "compare"
+            },
+            "type": "boolOp"
+          },
+          "version": [
+            {
+              "op": "==",
+              "version": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  2,
+                  0,
+                  1
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "description": "",
+    "develop": false,
+    "extras": {},
+    "files": {
+      "all": {},
+      "eggs": [],
+      "others": [],
+      "sdists": [],
+      "wheels": []
+    },
+    "name": "multi-choice-package",
+    "optional": false,
+    "python-versions": [
+      {
+        "op": ">=",
+        "version": {
+          "dev": null,
+          "epoch": 0,
+          "local": null,
+          "post": null,
+          "pre": null,
+          "release": [
+            3,
+            8,
+            0
+          ]
+        }
+      },
+      {
+        "op": "<",
+        "version": {
+          "dev": null,
+          "epoch": 0,
+          "local": null,
+          "post": null,
+          "pre": null,
+          "release": [
+            4,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "source": {
+      "type": "directory",
+      "url": "../multi-choice-package"
+    },
+    "version": "0.1.0",
+    "version'": {
+      "dev": null,
+      "epoch": 0,
+      "local": null,
+      "post": null,
+      "pre": null,
+      "release": [
+        0,
+        1,
+        0
+      ]
+    }
+  }
+}

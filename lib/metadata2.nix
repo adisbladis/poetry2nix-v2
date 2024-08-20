@@ -11,8 +11,6 @@ let
     versionAtLeast
     mapAttrs
     concatMap
-    mapAttrsToList
-    concatLists
     hasPrefix
     isString
     match
@@ -21,6 +19,13 @@ let
     toList
     elemAt
     filterAttrs
+    all
+    groupBy
+    genericClosure
+    attrNames
+    any
+    remove
+    attrValues
     ;
 
   inherit (pyproject-nix.lib) pep440 pep508;
@@ -55,6 +60,137 @@ in
 
 lib.fix (self: {
 
+  resolveDependencies =
+    { project }:
+    let
+      packages' = map self.parsePackage project.poetryLock.package;
+    in
+    {
+      # PEP-508 environment as returned by pyproject-nix.lib.pep508.mkEnviron
+      environ,
+      # Top-level project dependencies:
+      # - as parsed by pyproject-nix.lib.pep621.parseDependencies
+      # - as filtered by pyproject-nix.lib.pep621.filterDependencies
+      dependencies,
+    }:
+    let
+      # Get full Python version from environment for filtering
+      pythonVersion = environ.python_full_version.value;
+
+      # Project top-level dependencies
+      #
+      # Poetry contains it's Python dependency constraint in the regular dependency set,
+      # but the interpreter isn't managed by Poetry, so filter it out.
+      topLevelDependencies = filter (dep: dep.name != "python") dependencies.dependencies;
+
+      # List parsed poetry.lock packages filtered by interpreter & environment
+      packages =
+        # Filter dependencies not compatible with this environment.
+        map (self.filterPackage environ) (
+          # Filter packages not compatible with this interpreter version
+          filter (
+            pkg: all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) pkg.python-versions
+          ) packages'
+        );
+
+      # Group list of package candidates by package name (pname)
+      candidates = groupBy (pkg: pkg.name) packages;
+
+      # Group list of package candidates by qualified package name (pname + version)
+      allCandidates = groupBy (pkg: "${pkg.name}-${pkg.version}") packages;
+
+      # Make key return for genericClosure
+      mkKey = package: {
+        key = "${package.name}-${package.version}";
+        inherit package;
+      };
+
+      # Walk the graph from the top-level dependencies to get all possible dependency candidates
+      allDependencies = groupBy (dep: dep.package.name) (genericClosure {
+        # Build a startSet from filtered top-level dependency candidates
+        startSet = concatMap (
+          dep:
+          map mkKey (
+            filter (
+              package: all (spec: pep440.comparators.${spec.op} package.version' spec.version) dep.conditions
+            ) candidates.${dep.name}
+          )
+        ) topLevelDependencies;
+
+        # Recurse into dependencies of dependencies
+        operator =
+          { key, package }:
+          concatMap (
+            dep:
+            concatMap (
+              name:
+              let
+                specs = map (constraint: constraint.version) dep.dependencies.${name};
+              in
+              map mkKey (
+                filter (
+                  package: any (all (spec: pep440.comparators.${spec.op} package.version' spec.version)) specs
+                ) candidates.${name}
+              )
+            ) (attrNames dep.dependencies)
+          ) allCandidates.${key};
+      });
+
+      depNames = attrNames allDependencies;
+
+      # Reduce dependency candidates down to the one resolved dependency.
+      reduceDependencies =
+        attrs:
+        let
+          result = mapAttrs (
+            name: candidates:
+            if length candidates == 1 then
+              (head candidates).package
+            else
+              let
+                # Extract version constraints for this package from all other packages
+                specs = concatMap (
+                  n:
+                  let
+                    package = attrs.${n};
+                  in
+                  if isList package then
+                    map (pkg: concatMap (c: c.version) (pkg.package.dependencies.${name} or [ ])) package
+                  else if isAttrs package then
+                    concatMap (c: c.version) (package.package.dependencies.${name} or [ ])
+                  else
+                    throw "Unhandled type: ${typeOf package}"
+                ) (remove name depNames);
+              in
+              filter (
+                package: any (all (spec: pep440.comparators.${spec.op} package.package.version' spec.version)) specs
+              ) candidates
+          ) attrs;
+          done = all isAttrs (attrValues result);
+        in
+        if done then result else reduceDependencies result;
+
+    in
+    reduceDependencies allDependencies;
+
+  # Filter a packages dependencies by it's PEP-508 environment.
+  filterPackage =
+    # PEP-508 environment as returned by pyproject-nix.lib.pep508.mkEnviron
+    environ:
+    let
+      filterDeps = filter (dep: dep.markers == null || pep508.evalMarkers environ dep.markers);
+    in
+    # Parsed poetry.lock metadata2 package
+    package:
+    package
+    // {
+      # TODO: mapAttrs/filterAttrs combo is inefficient, we can do the equivalent manually
+      dependencies = filterAttrs (_name: specs: length specs > 0) (
+        mapAttrs (_name: filterDeps) package.dependencies
+      );
+      extras = mapAttrs (_: filterDeps) package.extras;
+    };
+
   fetchPackage =
     {
       # The specific package segment from pdm.lock
@@ -79,15 +215,17 @@ lib.fix (self: {
 
     in
     if sourceType == "git" then
-      builtins.fetchGit ({
-        inherit (source) url;
-        rev = source.resolved_reference;
-      }
-      // optionalAttrs (source ? reference) { ref = "refs/tags/${source.reference}"; }
-      // optionalAttrs (versionAtLeast nixVersion "2.4") {
-        allRefs = true;
-        submodules = true;
-      })
+      builtins.fetchGit (
+        {
+          inherit (source) url;
+          rev = source.resolved_reference;
+        }
+        // optionalAttrs (source ? reference) { ref = "refs/tags/${source.reference}"; }
+        // optionalAttrs (versionAtLeast nixVersion "2.4") {
+          allRefs = true;
+          submodules = true;
+        }
+      )
     else if sourceType == "url" then
       (fetchurl {
         url =
@@ -174,7 +312,7 @@ lib.fix (self: {
             version = if dep ? version then parseVersionConds dep.version else null;
           }
         else if isList dep then
-          map parseDependency dep
+          concatMap parseDependency dep
         else
           throw "Unhandled dependency type: ${typeOf dep}";
 
@@ -217,16 +355,16 @@ lib.fix (self: {
     # Package segment parsed by parsePackage
     {
       name,
-      version,
+      version, # deadnix: skip
       version', # deadnix: skip
       dependencies,
       description,
       optional,
       files,
-      extras,
-      source, # deadnix: skip
+      extras, # deadnix: skip
       python-versions, # deadnix: skip
       develop, # deadnix: skip
+      source, # deadnix: skip
     }@package:
     {
       python,
@@ -239,9 +377,8 @@ lib.fix (self: {
       pythonManylinuxPackages,
       fetchurl,
       fetchPypiLegacy,
-      __poetry2nix,
       # Whether to prefer prebuilt binary wheels over sdists
-      preferWheel ? __poetry2nix.preferWheels,
+      preferWheel ? false, # TODO: Make globally configurable
     }:
     let
       # Select filename based on sdist/wheel preference order.
@@ -286,32 +423,23 @@ lib.fix (self: {
         in
         [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extra.extras;
 
-      # Filter dependencies by PEP-508 environment
-      filterDeps = filter (
-        dep: dep.markers == null || pep508.evalMarkers __poetry2nix.environ dep.markers
-      );
-      dependencies' = filterAttrs (_name: specs: length specs > 0) (
-        mapAttrs (_name: filterDeps) dependencies
-      );
-
     in
     buildPythonPackage (
       {
         pname = name;
         inherit version src format;
 
-        dependencies = concatLists (
-          mapAttrsToList (
-            name: spec:
-            let
-              dep = pythonPackages.${name};
-              extras = spec.extras or [ ];
-            in
-            [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extras
-          ) dependencies'
-        );
+        dependencies = concatMap (
+          name:
+          let
+            spec = dependencies.${name};
+            dep = pythonPackages.${name};
+            extras = spec.extras or [ ];
+          in
+          [ dep ] ++ map (extraName: dep.optional-dependencies.${extraName}) extras
+        ) (attrNames dependencies);
 
-        optional-dependencies = mapAttrs (_: extras: concatMap getExtra (filterDeps extras)) extras;
+        optional-dependencies = mapAttrs (_: extras: concatMap getExtra extras) extras;
 
         meta = {
           inherit description;
@@ -331,23 +459,21 @@ lib.fix (self: {
           # Add manylinux platform dependencies.
           lib.optionals (stdenv.isLinux && stdenv.hostPlatform.libc == "glibc") (
             lib.unique (
-              concatLists (
-                map (
-                  tag:
-                  (
-                    if hasPrefix "manylinux1" tag then
-                      pythonManylinuxPackages.manylinux1
-                    else if hasPrefix "manylinux2010" tag then
-                      pythonManylinuxPackages.manylinux2010
-                    else if hasPrefix "manylinux2014" tag then
-                      pythonManylinuxPackages.manylinux2014
-                    else if hasPrefix "manylinux_" tag then
-                      pythonManylinuxPackages.manylinux2014
-                    else
-                      [ ] # Any other type of wheel don't need manylinux inputs
-                  )
-                ) (parseWheelFileName filename).platformTags
-              )
+              concatMap (
+                tag:
+                (
+                  if hasPrefix "manylinux1" tag then
+                    pythonManylinuxPackages.manylinux1
+                  else if hasPrefix "manylinux2010" tag then
+                    pythonManylinuxPackages.manylinux2010
+                  else if hasPrefix "manylinux2014" tag then
+                    pythonManylinuxPackages.manylinux2014
+                  else if hasPrefix "manylinux_" tag then
+                    pythonManylinuxPackages.manylinux2014
+                  else
+                    [ ] # Any other type of wheel don't need manylinux inputs
+                )
+              ) (parseWheelFileName filename).platformTags
             )
           );
       }

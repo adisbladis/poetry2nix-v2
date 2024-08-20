@@ -1,5 +1,5 @@
 {
-  "dependencies": ["iniconfig", "packaging", "pluggy"],
+  "dependencies": ["colorama", "iniconfig", "packaging", "pluggy"],
   "format": "pyproject",
   "meta": {
     "description": "pytest: simple powerful testing with Python"

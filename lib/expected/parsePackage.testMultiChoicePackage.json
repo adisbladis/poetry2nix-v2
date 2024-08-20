@@ -1,124 +1,140 @@
 {
   "dependencies": {
     "arpeggio": [
-      [
-        {
-          "markers": {
+      {
+        "markers": {
+          "lhs": {
             "lhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_version"
-              },
-              "op": ">=",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [3, 7]
-                }
-              },
-              "type": "compare"
+              "type": "variable",
+              "value": "python_version"
             },
-            "op": "and",
+            "op": ">=",
             "rhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_version"
-              },
-              "op": "<",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [3, 10]
-                }
-              },
-              "type": "compare"
-            },
-            "type": "boolOp"
-          },
-          "version": [
-            {
-              "op": "==",
-              "version": {
+              "type": "version",
+              "value": {
                 "dev": null,
                 "epoch": 0,
                 "local": null,
                 "post": null,
                 "pre": null,
-                "release": [2, 0, 2]
+                "release": [
+                  3,
+                  7
+                ]
               }
-            }
-          ]
-        }
-      ],
-      [
-        {
-          "markers": {
-            "lhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_version"
-              },
-              "op": ">=",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [3, 10]
-                }
-              },
-              "type": "compare"
             },
-            "op": "and",
-            "rhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_version"
-              },
-              "op": "<",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [3, 11]
-                }
-              },
-              "type": "compare"
-            },
-            "type": "boolOp"
+            "type": "compare"
           },
-          "version": [
-            {
-              "op": "==",
-              "version": {
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
                 "dev": null,
                 "epoch": 0,
                 "local": null,
                 "post": null,
                 "pre": null,
-                "release": [2, 0, 1]
+                "release": [
+                  3,
+                  10
+                ]
               }
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "version": [
+          {
+            "op": "==",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                2,
+                0,
+                2
+              ]
             }
-          ]
-        }
-      ]
+          }
+        ]
+      },
+      {
+        "markers": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": ">=",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  10
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "version": [
+          {
+            "op": "==",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                2,
+                0,
+                1
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
   "description": "",
@@ -142,7 +158,11 @@
         "local": null,
         "post": null,
         "pre": null,
-        "release": [3, 8, 0]
+        "release": [
+          3,
+          8,
+          0
+        ]
       }
     },
     {
@@ -153,7 +173,11 @@
         "local": null,
         "post": null,
         "pre": null,
-        "release": [4, 0, 0]
+        "release": [
+          4,
+          0,
+          0
+        ]
       }
     }
   ],
@@ -168,6 +192,10 @@
     "local": null,
     "post": null,
     "pre": null,
-    "release": [0, 1, 0]
+    "release": [
+      0,
+      1,
+      0
+    ]
   }
 }
