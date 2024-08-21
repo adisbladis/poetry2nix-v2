@@ -19,10 +19,14 @@ let
 
 in
 {
+  # Create an overlay from a loaded pyproject.nix Poetry project.
   mkOverlay =
     {
+      # Project loaded using pyproject-nix.lib.project.loadPoetryPyproject
       project,
+      # Whether to prefer binary wheels over sdists
       preferWheels,
+      # Which extras to enable for project
       extras ? [ ],
     }:
     let

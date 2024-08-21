@@ -60,11 +60,21 @@ in
 
 lib.fix (self: {
 
+  /*
+    Resolve a Poetry project's dependencies.
+
+    Returns an attribute set like:
+    {
+      requests = metadata2.parsePackage ...;
+    }
+  */
   resolveDependencies =
+    # Top-level project
     { project }:
     let
       packages' = map self.parsePackage project.poetryLock.package;
     in
+    # Environment parameters
     {
       # PEP-508 environment as returned by pyproject-nix.lib.pep508.mkEnviron
       environ,
@@ -173,7 +183,16 @@ lib.fix (self: {
     in
     reduceDependencies allDependencies;
 
-  # Filter a packages dependencies by it's PEP-508 environment.
+  /*
+    Filter a parsed packages dependencies by it's PEP-508 environment.
+
+    Filters out:
+    - dependencies
+    - extras
+
+    Notably missing:
+    - PEP-517 build-system
+  */
   filterPackage =
     # PEP-508 environment as returned by pyproject-nix.lib.pep508.mkEnviron
     environ:
@@ -191,6 +210,11 @@ lib.fix (self: {
       extras = mapAttrs (_: filterDeps) package.extras;
     };
 
+  /*
+    Fetch a parsed package.
+
+    Invokes builtins.fetchGit for git and fetchPypiLegacy for PyPI.
+  */
   fetchPackage =
     {
       # The specific package segment from pdm.lock
@@ -248,6 +272,13 @@ lib.fix (self: {
         inherit urls;
       });
 
+  /*
+    Partition a list of files from poetry.lock into categories:
+    - sdists
+    - wheels
+    - eggs
+    - others
+  */
   partitionFiles =
     # List of files from poetry.lock -> package segment
     files:
@@ -267,7 +298,11 @@ lib.fix (self: {
       all = listToAttrs (map (f: nameValuePair f.file f) files);
     };
 
-  # Parse a single package from poetry.lock
+  /*
+    Parse a package from poetry.lock.
+
+    Note that the parsed version lives in `version'`, while the original verbatim string version is saved as `version`.
+  */
   parsePackage =
     let
       # Poetry extras are not in PEP-508 form:
@@ -345,6 +380,11 @@ lib.fix (self: {
       python-versions = parseVersionConds python-versions;
     };
 
+  /*
+    Call buildPythonPackage with parameters from poetry.lock package.
+
+    Note: Needs to be called with pre-filtered dependencies.
+  */
   mkPackage =
     {
       # Pyproject.nix project (loadPoetryPyproject)

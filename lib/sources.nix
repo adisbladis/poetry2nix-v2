@@ -18,6 +18,11 @@ let
 
 in
 {
+  /*
+    Parse pyproject.toml package sources
+
+    As described in https://python-poetry.org/docs/repositories/#package-sources
+  */
   mkSources =
     { project }:
     let

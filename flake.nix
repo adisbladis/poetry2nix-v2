@@ -30,6 +30,7 @@
       flake-parts,
       treefmt-nix,
       pyproject-nix,
+      nix-github-actions,
       ...
     }@inputs:
     let
@@ -45,11 +46,11 @@
 
       imports = [ treefmt-nix.flakeModule ];
 
-      # flake.githubActions = nix-github-actions.lib.mkGithubMatrix {
-      #   checks = {
-      #     inherit (self.checks) x86_64-linux;
-      #   };
-      # };
+      flake.githubActions = nix-github-actions.lib.mkGithubMatrix {
+        checks = {
+          inherit (self.checks) x86_64-linux;
+        };
+      };
 
       flake.lib = import ./lib {
         inherit pyproject-nix;
@@ -89,12 +90,11 @@
         {
           treefmt.imports = [ ./dev/treefmt.nix ];
 
-          # checks =
-          #   builtins.removeAttrs self.packages.${system} [ "default" ]
-          #   // (import ./tests {
-          #     inherit lib pyproject-nix pkgs;
-          #     poetry2nix = self;
-          #   });
+          checks = builtins.removeAttrs self.packages.${system} [ "default" ];
+          # // (import ./tests {
+          #   inherit lib pyproject-nix pkgs;
+          #   poetry2nix = self;
+          # });
 
           devShells.default = pkgs.mkShell {
             packages = [
@@ -107,11 +107,10 @@
             ]; # ++ self.packages.${system}.doc.nativeBuildInputs;
           };
 
-          # packages.doc = pkgs.callPackage ./doc {
-          #   inherit self;
-          #   nixdoc = nixdoc.packages.${system}.default;
-          #   mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
-          # };
+          packages.doc = pkgs.callPackage ./doc {
+            inherit self;
+            mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
+          };
         };
     };
 }
