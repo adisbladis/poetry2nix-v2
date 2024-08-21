@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "dependent-package"
+version = "0.1.0"
+description = ""
+authors = ["adisbladis <adisbladis@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+multi-choice-package = { path = "../multi-choice-package/" }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

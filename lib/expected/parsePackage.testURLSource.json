@@ -1,0 +1,112 @@
+{
+  "dependencies": {},
+  "description": "Packrat parser interpreter",
+  "develop": false,
+  "extras": {
+    "dev": [
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "mike",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "mkdocs",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "twine",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "wheel",
+        "url": null
+      }
+    ],
+    "test": [
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "coverage",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "coveralls",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "flake8",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "pytest",
+        "url": null
+      }
+    ]
+  },
+  "files": {
+    "all": {
+      "Arpeggio-2.0.2-py2.py3-none-any.whl": {
+        "file": "Arpeggio-2.0.2-py2.py3-none-any.whl",
+        "hash": "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"
+      }
+    },
+    "eggs": [],
+    "others": [],
+    "sdists": [],
+    "wheels": [
+      {
+        "file": "Arpeggio-2.0.2-py2.py3-none-any.whl",
+        "hash": "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"
+      }
+    ]
+  },
+  "name": "Arpeggio",
+  "optional": false,
+  "python-versions": [
+    {
+      "op": "",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": ["*"]
+      }
+    }
+  ],
+  "source": {
+    "type": "url",
+    "url": "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"
+  },
+  "version": "2.0.2",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [2, 0, 2]
+  }
+}

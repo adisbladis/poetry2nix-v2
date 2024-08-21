@@ -1,0 +1,201 @@
+{
+  "dependencies": {
+    "arpeggio": [
+      {
+        "markers": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": ">=",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  7
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  10
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "version": [
+          {
+            "op": "==",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                2,
+                0,
+                2
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "markers": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": ">=",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  10
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "version": [
+          {
+            "op": "==",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                2,
+                0,
+                1
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "description": "",
+  "develop": false,
+  "extras": {},
+  "files": {
+    "all": {},
+    "eggs": [],
+    "others": [],
+    "sdists": [],
+    "wheels": []
+  },
+  "name": "multi-choice-package",
+  "optional": false,
+  "python-versions": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [
+          3,
+          8,
+          0
+        ]
+      }
+    },
+    {
+      "op": "<",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [
+          4,
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "source": {
+    "type": "directory",
+    "url": "../multi-choice-package"
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ]
+  }
+}

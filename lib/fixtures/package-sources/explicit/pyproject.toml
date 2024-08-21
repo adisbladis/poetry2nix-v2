@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "package-sources"
+version = "0.1.0"
+description = ""
+authors = ["adisbladis <adisbladis@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+arpeggio = { version = "^2.0.2", source = "foo" }
+
+[[tool.poetry.source]]
+name = "foo"
+url = "https://pypi.org/simple"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "multi-choice-package"
+version = "0.1.0"
+description = ""
+authors = ["adisbladis <adisbladis@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+arpeggio = [
+  { version = "2.0.2", python = ">=3.7,<3.10" },
+  { version = "2.0.1", python = ">=3.10,<3.11" }
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

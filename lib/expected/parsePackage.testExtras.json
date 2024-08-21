@@ -1,0 +1,194 @@
+{
+  "dependencies": {},
+  "description": "HTTP library with thread-safe connection pooling, file post, and more.",
+  "develop": false,
+  "extras": {
+    "brotli": [
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [1, 0, 9]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "brotli",
+        "url": null
+      },
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [0, 8, 0]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "brotlicffi",
+        "url": null
+      }
+    ],
+    "h2": [
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [4]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [5]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "h2",
+        "url": null
+      }
+    ],
+    "socks": [
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [1, 5, 6]
+            }
+          },
+          {
+            "op": "!=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [1, 5, 7]
+            }
+          },
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [2, 0]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "pysocks",
+        "url": null
+      }
+    ],
+    "zstd": [
+      {
+        "conditions": [
+          {
+            "op": ">=",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [0, 18, 0]
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "zstandard",
+        "url": null
+      }
+    ]
+  },
+  "files": {
+    "all": {
+      "urllib3-2.2.2-py3-none-any.whl": {
+        "file": "urllib3-2.2.2-py3-none-any.whl",
+        "hash": "sha256:a448b2f64d686155468037e1ace9f2d2199776e17f0a46610480d311f73e3472"
+      },
+      "urllib3-2.2.2.tar.gz": {
+        "file": "urllib3-2.2.2.tar.gz",
+        "hash": "sha256:dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
+      }
+    },
+    "eggs": [],
+    "others": [],
+    "sdists": [
+      {
+        "file": "urllib3-2.2.2.tar.gz",
+        "hash": "sha256:dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
+      }
+    ],
+    "wheels": [
+      {
+        "file": "urllib3-2.2.2-py3-none-any.whl",
+        "hash": "sha256:a448b2f64d686155468037e1ace9f2d2199776e17f0a46610480d311f73e3472"
+      }
+    ]
+  },
+  "name": "urllib3",
+  "optional": false,
+  "python-versions": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [3, 8]
+      }
+    }
+  ],
+  "source": {},
+  "version": "2.2.2",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [2, 2, 2]
+  }
+}

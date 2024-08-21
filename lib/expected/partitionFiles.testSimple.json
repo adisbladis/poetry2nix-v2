@@ -1,0 +1,26 @@
+{
+  "all": {
+    "Arpeggio-2.0.2-py2.py3-none-any.whl": {
+      "file": "Arpeggio-2.0.2-py2.py3-none-any.whl",
+      "hash": "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"
+    },
+    "Arpeggio-2.0.2.tar.gz": {
+      "file": "Arpeggio-2.0.2.tar.gz",
+      "hash": "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700"
+    }
+  },
+  "eggs": [],
+  "others": [],
+  "sdists": [
+    {
+      "file": "Arpeggio-2.0.2.tar.gz",
+      "hash": "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700"
+    }
+  ],
+  "wheels": [
+    {
+      "file": "Arpeggio-2.0.2-py2.py3-none-any.whl",
+      "hash": "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250"
+    }
+  ]
+}

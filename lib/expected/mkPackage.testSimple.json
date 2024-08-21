@@ -1,0 +1,14 @@
+{
+  "dependencies": [],
+  "format": "pyproject",
+  "meta": {
+    "description": "Packrat parser interpreter"
+  },
+  "optional-dependencies": {
+    "dev": ["mike", "mkdocs", "twine", "wheel"],
+    "test": ["coverage", "coveralls", "flake8", "pytest"]
+  },
+  "pname": "arpeggio",
+  "src": {},
+  "version": "2.0.2"
+}
